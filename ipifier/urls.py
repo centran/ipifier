@@ -11,4 +11,7 @@ urlpatterns = patterns('',
     url(r'^accounts/logout/$', logout, {'next_page': '/logout/'}),
     url(r'^logout/$', 'auth.views.logout'),
     url(r'^$', 'iptracker.views.default'),
+    url(r'^search/$', 'iptracker.views.search'),
+    url(r'^list/$', 'iptracker.views.list'),
+
 )

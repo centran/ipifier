@@ -1,0 +1,51 @@
+{% load admin_static %}{% load url from future %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "css/style.css" %}{% endblock %}" />
+{% block extrastyle %}{% endblock %}
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+
+<!-- Container -->
+<div id="container">
+
+    {% if not is_popup %}
+    <!-- Header -->
+    <div id="header">
+	<div id="header-text"><strong>IPIFIER</strong></div>
+    </div>
+    <!-- END Header -->
+    <div id="nav">
+        <ul>
+            <li><a href="{% url 'iptracker.views.default' %}">home</a></li>
+            <li><a href="{% url 'iptracker.views.search' %}">search</a></li>
+            <li><a href="{% url 'iptracker.views.list' %}">list</a></li>
+        </ul>
+    </div>
+    {% endif %}
+
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
+      {% block content %}{% endblock content %} 
+      <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    <div id="footer">{% block footer %}{% endblock %}</div>
+</div>
+<!-- END Container -->
+
+</body>
+</html>
