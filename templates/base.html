@@ -1,4 +1,6 @@
-{% load admin_static %}{% load url from future %}<!DOCTYPE html>
+{% load admin_static %}
+{% load url from future %}
+<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}{% endblock %}</title>
@@ -21,7 +23,7 @@
     <!-- END Header -->
     <div id="nav">
         <ul>
-            <li><a href="{% url 'iptracker.views.default' %}">home</a></li>
+	    <li><a href="{% url 'iptracker.views.default' %}">home</a></li>
             <li><a href="{% url 'iptracker.views.search' %}">search</a></li>
             <li><a href="{% url 'iptracker.views.list' %}">list</a></li>
         </ul>

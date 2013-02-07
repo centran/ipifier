@@ -10,8 +10,8 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', login),
     url(r'^accounts/logout/$', logout, {'next_page': '/logout/'}),
     url(r'^logout/$', 'auth.views.logout'),
-    url(r'^$', 'iptracker.views.default'),
-    url(r'^search/$', 'iptracker.views.search'),
-    url(r'^list/$', 'iptracker.views.list'),
+    url(r'^$', 'iptracker.views.default', name='home'),
+    url(r'^search/$', 'iptracker.views.search', name='search'),
+    url(r'^list/$', 'iptracker.views.list', name='list'),
 
 )
