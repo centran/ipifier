@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+
+{% block content %}
+<h1><a href="{% url list %}">List</a></h1>
+<p>Select an option below to edit entries.</p>
+<a href="{% url list-domains %}">List by domain zone</a><br />
+<a href="">List by IP range</a><br />
+<a href="">List by entry name</a><br />
+{% endblock content %}

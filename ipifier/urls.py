@@ -13,5 +13,7 @@ urlpatterns = patterns('',
     url(r'^$', 'iptracker.views.default', name='home'),
     url(r'^search/$', 'iptracker.views.search', name='search'),
     url(r'^list/$', 'iptracker.views.list', name='list'),
-
+    url(r'^list/domains/$', 'iptracker.views.list_domains', name='list-domains'),
+    url(r'^list/domains/\d+$', 'iptracker.views.list_domains_entries', name='list-domains-entries'),
+    
 )

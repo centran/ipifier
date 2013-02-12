@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+
+{% block content %}
+<h1><a href="{% url list %}">List</a> -> <a href="{% url list-domains %}">Domains</a> -> <a href="">Entry</a></h1>
+DOMAIN ENTRIES
+<!--<div class="pagination">
+    <span class="step-links">
+        {% if all_domains.has_previous %}
+            <a href="?page={{ all_domains.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ all_domains.number }} of {{ all_domains.paginator.num_pages }}.
+        </span>
+
+        {% if all_domains.has_next %}
+            <a href="?page={{ all_domains.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+-->
+{% endblock content %}
