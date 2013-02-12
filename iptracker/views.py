@@ -33,5 +33,15 @@ def list_domains(request):
     c = paginator.page(paginator.num_pages)
   return render_to_response('list-domains.html', {'all_domains': c})
 
-def list_domains_entries(request):
-  return render_to_response('list-domains-entries.html')
+@login_required()
+def list_domains_entries(request, domain_id=1):
+  entries = Record.objects.filter(domain_id=domain_id).select_related() 
+  return render_to_response('list-domains-entries.html', {'entries': entries})
+
+@login_required()
+def edit_record(request, record_id=1):
+  return render_to_response('edit-record.html')
+
+@login_required()
+def edit(request):
+  return render_to_response('edit.html')

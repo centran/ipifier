@@ -59,7 +59,7 @@ class Mac(models.Model):
     return self.mac
 
 class Domain(models.Model):
-  name = models.CharField(max_length=250)
+  name = models.CharField(max_length=250, unique=True)
   master = models.CharField(max_length=128)
   last_check = models.IntegerField(blank=True, null=True)
   native = 'native'
