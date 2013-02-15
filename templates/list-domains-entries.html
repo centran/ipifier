@@ -50,21 +50,20 @@
 	No entries for this domain
 {% endif %}
 
-
-<!--<div class="pagination">
+<div class="pagination">
     <span class="step-links">
-        {% if all_domains.has_previous %}
-            <a href="?page={{ all_domains.previous_page_number }}">previous</a>
+        {% if entries.has_previous %}
+            <a href="?page={{ entries.previous_page_number }}">previous</a>
         {% endif %}
 
         <span class="current">
-            Page {{ all_domains.number }} of {{ all_domains.paginator.num_pages }}.
+            Page {{ entries.number }} of {{ entries.paginator.num_pages }}.
         </span>
 
-        {% if all_domains.has_next %}
-            <a href="?page={{ all_domains.next_page_number }}">next</a>
+        {% if entries.has_next %}
+            <a href="?page={{ entries.next_page_number }}">next</a>
         {% endif %}
     </span>
 </div>
--->
+
 {% endblock content %}
