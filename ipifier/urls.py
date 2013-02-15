@@ -16,5 +16,6 @@ urlpatterns = patterns('',
     url(r'^list/domains/$', 'iptracker.views.list_domains', name='list-domains'),
     url(r'^list/domains/(?P<domain_id>\d+)/$', 'iptracker.views.list_domains_entries', name='list-domains-entries'),
     url(r'^edit/$', 'iptracker.views.edit', name='edit'),
+    url(r'^edit/record/saved/$', 'iptracker.views.edit_record_saved', name='edit-record-saved'),
     url(r'^edit/record/(?P<record_id>\d+)/$', 'iptracker.views.edit_record', name='edit-record'),
 )
