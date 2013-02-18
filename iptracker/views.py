@@ -36,6 +36,20 @@ def list_domains(request):
   return render_to_response('list-domains.html', {'all_domains': c})
 
 @login_required()
+def list_entries(request):
+  entries = Record.objects.all()
+  paginator = Paginator(entries, 20)
+
+  page = request.GET.get('page')
+  try:
+    c = paginator.page(page)
+  except PageNotAnInteger:
+    c = paginator.page(1)
+  except Emptypage:
+    c = paginator.page(paginator.num_pages)
+  return render_to_response('list-entries.html', {'entries': c})
+
+@login_required()
 def list_domains_entries(request, domain_id=1):
   entries = Record.objects.filter(domain_id=domain_id).select_related()
   paginator = Paginator(entries, 20)
