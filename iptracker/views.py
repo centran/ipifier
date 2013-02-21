@@ -99,3 +99,19 @@ def edit_record_saved(request):
 @login_required()
 def edit(request):
   return render_to_response('edit.html')
+
+@login_required()
+def add(request):
+  return render_to_response('add.html')
+
+@login_required()
+def add_domain(request):
+  return render_to_response('add-domain.html')
+
+@login_required()
+def add_iprange(request):
+  return render_to_response('add-iprange.html')
+
+@login_required()
+def add_entry(request):
+  return render_to_response('add-entry.html')

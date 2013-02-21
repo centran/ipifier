@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+
+{% block content %}
+<h1><a href="{% url add %}">Add</a></h1>
+<p>Select an option below to add a record</p>
+<a href="{% url add-domain %}">Add a domain zone</a><br />
+<a href="{% url add-iprange %}">Add an IP Range</a><br />
+<a href="{% url add-entry %}">Add an entry</a><br />
+{% endblock content %}

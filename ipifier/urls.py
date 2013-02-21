@@ -19,4 +19,8 @@ urlpatterns = patterns('',
     url(r'^edit/$', 'iptracker.views.edit', name='edit'),
     url(r'^edit/record/saved/$', 'iptracker.views.edit_record_saved', name='edit-record-saved'),
     url(r'^edit/record/(?P<record_id>\d+)/$', 'iptracker.views.edit_record', name='edit-record'),
+    url(r'^add/$', 'iptracker.views.add', name='add'),
+    url(r'^add/domain/$', 'iptracker.views.add_domain', name='add-domain'),
+    url(r'^add/iprange/$', 'iptracker.views.add_iprange', name='add-iprange'),
+    url(r'^add/entry$', 'iptracker.views.add_entry', name='add-entry'),
 )
