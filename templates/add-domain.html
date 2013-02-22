@@ -5,4 +5,17 @@
 {% block content %}
 <h1><a href="{% url add %}">Add</a> -> <a href="">Domain</a> </h1>
 <p>Add a domain zone record</p>
+<form method="POST" action"">
+{% csrf_token %}
+<table>
+        <tr>   
+                <th>NAME</th>
+		<th>TYPE</th>
+        </tr>
+        <tr>   
+                <td>{{ form.name }}</td>
+		<td>{{ form.type }}</td>
+        </tr>
+</table>
+<input id="saveForm" class="button_text" type="submit" name="submit" value="Submit" />
 {% endblock content %}

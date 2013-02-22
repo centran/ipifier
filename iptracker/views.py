@@ -106,7 +106,19 @@ def add(request):
 
 @login_required()
 def add_domain(request):
-  return render_to_response('add-domain.html')
+  if request.method =='POST':
+    form = DomainForm(request.POST)
+    if form.is_valid():
+      domain = Domain( 
+        name=form.cleaned_data['name'],
+        type=form.cleaned_data['type']
+      )
+      domain.save()
+      return HttpResponseRedirect('/add/saved')
+  else:
+    form = DomainForm(initial={'type': 'master'})
+  
+  return render_to_response('add-domain.html', {'form': form}, RequestContext(request))
 
 @login_required()
 def add_iprange(request):
@@ -115,3 +127,7 @@ def add_iprange(request):
 @login_required()
 def add_entry(request):
   return render_to_response('add-entry.html')
+
+@login_required()
+def add_saved(request):
+  return render_to_response('add-saved.html')

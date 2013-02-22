@@ -60,13 +60,11 @@ class Mac(models.Model):
 
 class Domain(models.Model):
   name = models.CharField(max_length=250, unique=True)
-  master = models.CharField(max_length=128)
-  last_check = models.IntegerField(blank=True, null=True)
-  native = 'native'
+  slave = 'slave'
   master = 'master'
-  type_choices = ( (native, 'native'), (master, 'master') )
-  type = models.CharField(max_length=6, choices=type_choices, default=native)
-  notified_serial = models.IntegerField(blank=True, null=True)
+  forward = 'forward'
+  type_choices = ( (master, 'master'), (slave, 'slave'), (forward, 'forward') )
+  type = models.CharField(max_length=7, choices=type_choices, default=master)
 
   def __unicode__(self):
     return self.name
