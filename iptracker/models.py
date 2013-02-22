@@ -47,6 +47,7 @@ class Record(models.Model):
 class Ip(models.Model):
   ip = models.GenericIPAddressField()
   record_id = models.ForeignKey('Record')
+  range_id = models.ForeignKey('Range')
 
   def __unicode__(self):
     return self.ip
@@ -65,6 +66,14 @@ class Domain(models.Model):
   forward = 'forward'
   type_choices = ( (master, 'master'), (slave, 'slave'), (forward, 'forward') )
   type = models.CharField(max_length=7, choices=type_choices, default=master)
+
+  def __unicode__(self):
+    return self.name
+
+class Range(models.Model):
+  name = models.CharField(max_length=250, unique=True)
+  start = models.GenericIPAddressField()
+  end = models.GenericIPAddressField()
 
   def __unicode__(self):
     return self.name

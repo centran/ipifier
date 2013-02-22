@@ -10,3 +10,8 @@ class RecordForm(forms.Form):
 class DomainForm(forms.Form):
   name = forms.CharField(max_length=255)
   type = forms.TypedChoiceField(choices=Domain.type_choices)
+
+class RangeForm(forms.Form):
+  name = forms.CharField(max_length=255)
+  start = forms.CharField()
+  end = forms.CharField()

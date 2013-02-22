@@ -122,7 +122,20 @@ def add_domain(request):
 
 @login_required()
 def add_iprange(request):
-  return render_to_response('add-iprange.html')
+  if request.method == 'POST':
+    form = RangeForm(request.POST)
+    if form.is_valid():
+      range = Range(
+        name=form.cleaned_data['name'],
+        start=form.cleaned_data['start'],
+        end=form.cleaned_data['end']
+      )
+      range.save()
+      return HttpResponseRedirect('/add/saved')
+  else:
+    form = RangeForm()
+
+  return render_to_response('add-iprange.html', {'form': form}, RequestContext(request))
 
 @login_required()
 def add_entry(request):
