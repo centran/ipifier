@@ -36,6 +36,20 @@ def list_domains(request):
   return render_to_response('list-domains.html', {'all_domains': c})
 
 @login_required()
+def list_iprange(request):
+  all_ranges = Range.objects.all()
+  paginator = Paginator(all_ranges, 10)
+
+  page = request.GET.get('page')
+  try:
+    c = paginator.page(page)
+  except PageNotAnInteger:
+    c = paginator.page(1)
+  except EmptyPage:
+    c = paginator.page(paginator.num_pages)
+  return render_to_response('list-iprange.html', {'all_ranges': c})
+
+@login_required()
 def list_entries(request):
   entries = Record.objects.all()
   paginator = Paginator(entries, 20)
@@ -136,6 +150,20 @@ def add_iprange(request):
     form = RangeForm()
 
   return render_to_response('add-iprange.html', {'form': form}, RequestContext(request))
+
+@login_required()
+def list_iprange_entries(request, range_id=1):
+  entries = Record.objects.select_related().filter(ip__range_id=range_id)
+  paginator = Paginator(entries, 20)
+
+  page = request.GET.get('page')
+  try:
+    c = paginator.page(page)
+  except PageNotAnInteger:
+    c = paginator.page(1)
+  except EmptyPage:
+    c = paginator.page(paginator.num_pages) 
+  return render_to_response('list-iprange-entries.html', {'entries': c})
 
 @login_required()
 def add_entry(request):
