@@ -8,6 +8,8 @@ from iptracker.models import *
 from iptracker.forms import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template import RequestContext
+from django.core.validators import validate_ipv46_address, validate_ipv4_address, validate_ipv6_address
+from django.core.exceptions import ValidationError
 
 @login_required()
 def default(request):
@@ -167,8 +169,41 @@ def list_iprange_entries(request, range_id=1):
 
 @login_required()
 def add_entry(request):
-  return render_to_response('add-entry.html')
+  if request.method == 'POST':
+    form = AddRecordForm(request.POST)
+    if form.is_valid():
+      domain = Domain.objects.get(id=form.cleaned_data['domain'])
+      if form.cleaned_data['type'] == 'A':
+        try:
+          validate_ipv4_address(form.cleaned_data['content'])
+        except ValidationError:
+          return HttpResponseRedirect('/add/error/ip')
+      if form.cleaned_data['type'] == 'AAAA':
+        try:
+          validate_ipv6_address(form.cleaned_data['content'])
+        except ValidationError:
+          return HttpResponseRedirect('/add/error/ip')
+       
+      record = Record(
+        name=form.cleaned_data['name'],
+        type=form.cleaned_data['type'],
+	content=form.cleaned_data['content'],
+        ttl=form.cleaned_data['ttl'],
+        domain_id = domain,
+        pri = 1,
+        changedate = 1
+      )
+      record.save()
+      return HttpResponseRedirect('/add/saved')
+  else:
+    form = AddRecordForm()
+
+  return render_to_response('add-entry.html', {'form': form}, RequestContext(request))
 
 @login_required()
 def add_saved(request):
   return render_to_response('add-saved.html')
+
+@login_required()
+def add_error_ip(request):
+  return render_to_response('add-error-ip.html')

@@ -26,4 +26,5 @@ urlpatterns = patterns('',
     url(r'^add/iprange/$', 'iptracker.views.add_iprange', name='add-iprange'),
     url(r'^add/entry$', 'iptracker.views.add_entry', name='add-entry'),
     url(r'^add/saved/$', 'iptracker.views.add_saved', name='add-saved'),
+    url(r'^add/error/ip/$', 'iptracker.views.add_error_ip', name='add-error-ip'),
 )
