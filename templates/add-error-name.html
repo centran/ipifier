@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+
+{% block content %}
+<h1><a href="{% url add %}">Add</a> -> <a href="">Saved</a></h1>
+<p>Entry has NOT been saved!</p>
+<p>ERROR: There is already a range of that name.</p>
+{% endblock content %}

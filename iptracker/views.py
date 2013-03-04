@@ -10,6 +10,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template import RequestContext
 from django.core.validators import validate_ipv46_address, validate_ipv4_address, validate_ipv6_address
 from django.core.exceptions import ValidationError
+from netaddr import *
 
 @login_required()
 def default(request):
@@ -125,6 +126,10 @@ def add_domain(request):
   if request.method =='POST':
     form = DomainForm(request.POST)
     if form.is_valid():
+      domains = Domain.objects.all()
+      for d in domains:
+        if d.name == form.cleaned_data['name']:
+          return HttpResponseRedirect('/add/error/name')
       domain = Domain( 
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type']
@@ -141,6 +146,18 @@ def add_iprange(request):
   if request.method == 'POST':
     form = RangeForm(request.POST)
     if form.is_valid():
+      ranges = Range.objects.all()
+      for range in ranges:
+        if range.name == form.cleaned_data['name']:
+          return HttpResponseRedirect('/add/error/name')
+      try:
+        validate_ipv46_address(form.cleaned_data['start'])
+      except ValidationError:
+        return HttpResponseRedirect('/add/error/ip')
+      try:
+        validate_ipv46_address(form.cleaned_data['end'])
+      except ValidationError:
+        return HttpResponseRedirect('/add/error/ip')
       range = Range(
         name=form.cleaned_data['name'],
         start=form.cleaned_data['start'],
@@ -173,17 +190,26 @@ def add_entry(request):
     form = AddRecordForm(request.POST)
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
+      content = form.cleaned_data['content']
       if form.cleaned_data['type'] == 'A':
         try:
-          validate_ipv4_address(form.cleaned_data['content'])
+          validate_ipv4_address(content)
         except ValidationError:
           return HttpResponseRedirect('/add/error/ip')
       if form.cleaned_data['type'] == 'AAAA':
         try:
-          validate_ipv6_address(form.cleaned_data['content'])
+          validate_ipv6_address(content)
         except ValidationError:
           return HttpResponseRedirect('/add/error/ip')
-       
+      ranges = Range.objects.all()
+      found = False
+      for range in ranges:
+        r1 = IPRange(range.start, range.end)
+        addrs = list(r1)
+        if IPAddress(content) in addrs:
+          found = True
+      if not found:
+        return HttpResponseRedirect('/add/error/range')
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
@@ -207,3 +233,11 @@ def add_saved(request):
 @login_required()
 def add_error_ip(request):
   return render_to_response('add-error-ip.html')
+
+@login_required()
+def add_error_range(request):
+  return render_to_response('add-error-range.html')
+
+@login_required()
+def add_error_name(request):
+  return render_to_response('add-error-name.html')

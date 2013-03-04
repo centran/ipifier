@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+
+{% block content %}
+<h1><a href="{% url add %}">Add</a> -> <a href="">Saved</a></h1>
+<p>Entry has NOT been saved!</p>
+<p>ERROR: IP was not in know range. Create a range first.</p>
+{% endblock content %}
