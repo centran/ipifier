@@ -21,7 +21,7 @@ def search(request):
   return render_to_response('search.html')
 
 @login_required()
-def list(request):
+def list_default(request):
   return render_to_response('list.html')
 
 @login_required()
@@ -158,6 +158,17 @@ def add_iprange(request):
         validate_ipv46_address(form.cleaned_data['end'])
       except ValidationError:
         return HttpResponseRedirect('/add/error/ip')
+      ranges = Range.objects.all()
+      found = False
+      for range in ranges:
+        r1 = IPRange(range.start, range.end)
+        addrs = list(r1)
+        if IPAddress(form.cleaned_data['start']) in addrs:
+          found = True
+        if IPAddress(form.cleaned_data['end']) in addrs:
+          found = True
+      if found:
+        return HttpResponseRedirect('/add/error/range/ip')
       range = Range(
         name=form.cleaned_data['name'],
         start=form.cleaned_data['start'],
@@ -239,5 +250,24 @@ def add_error_range(request):
   return render_to_response('add-error-range.html')
 
 @login_required()
+def add_error_range_ip(request):
+  return render_to_response('add-error-range-ip.html')
+
+@login_required()
 def add_error_name(request):
   return render_to_response('add-error-name.html')
+
+@login_required()
+def delete(request):
+  return render_to_response('del.html')
+
+@login_required()
+def del_record(request, record_id=1):
+  entry = Record.objects.get(id=record_id)
+  return render_to_response('del-record.html', {'entry': entry})
+
+@login_required()
+def del_del_record(request, record_id=1):
+  entry = Record.objects.get(id=record_id)
+  entry.delete()
+  return render_to_response('del-deleted.html')

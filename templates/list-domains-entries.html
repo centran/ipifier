@@ -36,7 +36,7 @@
 		</tr>
 		{% for entry in entries %}
 		<tr>
-			<td><a href="{% url edit-record entry.id %}">EDIT</a></td>
+			<td><a href="{% url edit-record entry.id %}">EDIT</a> &nbsp; <a href="{% url del-record entry.id  %}">DELETE</a></td>
 			<td>{{ entry.name }}</td>
 			<td>{{ entry.type }}</td>
 			<td>{{ entry.content }}</td>
