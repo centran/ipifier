@@ -33,4 +33,5 @@ urlpatterns = patterns('',
     url(r'^add/error/range/$', 'iptracker.views.add_error_range', name='add-error-range'),
     url(r'^add/error/range/ip/$', 'iptracker.views.add_error_range_ip', name='add-error-range-ip'),
     url(r'^add/error/name/$', 'iptracker.views.add_error_name', name='add-error-name'),
+    url(r'^add/error/ip/exists$', 'iptracker.views.add_error_ip_exists', name='add-error-ip-exists'),
 )

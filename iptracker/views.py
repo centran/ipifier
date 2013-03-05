@@ -201,6 +201,11 @@ def add_entry(request):
     form = AddRecordForm(request.POST)
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
+      records = Record.objects.all()
+      for record in records:
+        if form.cleaned_data['name'] == record.name:
+          if record.domain_id == domain:
+            return HttpResponseRedirect('/add/error/name')  
       content = form.cleaned_data['content']
       if form.cleaned_data['type'] == 'A':
         try:
@@ -221,6 +226,10 @@ def add_entry(request):
           found = True
       if not found:
         return HttpResponseRedirect('/add/error/range')
+      ips = Ip.objects.all()
+      for ip in ips:
+        if ip.ip == content:
+          return HttpResponseRedirect('add/error/ip') 
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
@@ -256,6 +265,10 @@ def add_error_range_ip(request):
 @login_required()
 def add_error_name(request):
   return render_to_response('add-error-name.html')
+
+@login_required()
+def add_error_ip_exists(request):
+  return render_to_response('add-error-ip-exists.html')
 
 @login_required()
 def delete(request):
