@@ -3,7 +3,7 @@
 {% block title %}{{ title }} | Ipifier {% endblock %}
 
 {% block extrahead %}
-<!-- Row Highlight Javascript -->
+<!-- Row Highlight Javascript --> 
 <script type="text/javascript">
 	window.onload=function(){
 	var tfrow = document.getElementById('tfhover').rows.length;
@@ -17,8 +17,10 @@
 		  this.style.backgroundColor = '#d4e3e5';
 		};
 	}
+); 
 };
 </script>
+
 {% endblock extrahead %}
 
 {% block content %}
@@ -26,6 +28,7 @@
 {% if entries %}
 	
 	<table id="tfhover">
+		<thead>
 		<tr>
 			<th></th>
 			<th>NAME</th>
@@ -34,6 +37,8 @@
 			<th>TTL</th>
 			<th>PRI</th>
 		</tr>
+		</thead>
+		<tbody>
 		{% for entry in entries %}
 		<tr>
 			<td><a href="{% url edit-record entry.id %}">EDIT</a> &nbsp; <a href="{% url del-record entry.id  %}">DELETE</a></td>
@@ -44,26 +49,10 @@
 			<td>{{ entry.pri }}</td>
 		</tr>
 		{% endfor %}
+		</tbody>
 	</table>
 
 {% else %}
 	No entries for this domain
 {% endif %}
-
-<div class="pagination">
-    <span class="step-links">
-        {% if entries.has_previous %}
-            <a href="?page={{ entries.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ entries.number }} of {{ entries.paginator.num_pages }}.
-        </span>
-
-        {% if entries.has_next %}
-            <a href="?page={{ entries.next_page_number }}">next</a>
-        {% endif %}
-    </span>
-</div>
-
 {% endblock content %}

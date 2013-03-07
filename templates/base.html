@@ -5,6 +5,14 @@
 <head>
 <title>{% block title %}{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "css/style.css" %}{% endblock %}" />
+<script type="text/javascript" src="/static/jscript/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/jscript/jquery.datatables.js"></script>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+      $('table').dataTable( {
+   });
+});
+</script>
 {% block extrastyle %}{% endblock %}
 {% block extrahead %}{% endblock %}
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}

@@ -2,54 +2,24 @@
 
 {% block title %}{{ title }} | Ipifier {% endblock %}
 
-{% block extrahead %}
-<!-- Row Highlight Javascript -->
-<script type="text/javascript">
-        window.onload=function(){
-        var tfrow = document.getElementById('tfhover').rows.length;
-        var tbRow=[];
-        for (var i=1;i<tfrow;i++) {
-                tbRow[i]=document.getElementById('tfhover').rows[i];
-                tbRow[i].onmouseover = function(){
-                  this.style.backgroundColor = '#ffffff';
-                };
-                tbRow[i].onmouseout = function() {
-                  this.style.backgroundColor = '#d4e3e5';
-                };
-        }
-};
-</script>
-{% endblock extrahead %}
-
 {% block content %}
 <h1><a href="{% url list %}">List</a> -> <a href="{% url list-domains %}">Domains</a></h1>
 {% if all_domains %}
 	<table id="tfhover">
+		<thead>
 		<tr>
 			<th>NAME</th>
 		</tr>
+		</thead>
+		<tbody>
 		{% for domain in all_domains %}
 		<tr>
 			<td><a href="{% url list-domains %}{{ domain.id }}"> {{ domain.name }}</a></td>
 		</tr>
 		{% endfor %}
+		</tbody>
 	</table>
 {% else %}
 	<p>No domains</p>
 {% endif %}
-<div class="pagination">
-    <span class="step-links">
-        {% if all_domains.has_previous %}
-            <a href="?page={{ all_domains.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ all_domains.number }} of {{ all_domains.paginator.num_pages }}.
-        </span>
-
-        {% if all_domains.has_next %}
-            <a href="?page={{ all_domains.next_page_number }}">next</a>
-        {% endif %}
-    </span>
-</div>
 {% endblock content %}

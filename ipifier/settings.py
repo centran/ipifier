@@ -102,6 +102,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_sorting.middleware.SortingMiddleware',
 )
 
 ROOT_URLCONF = 'ipifier.urls'
@@ -129,6 +130,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'auth',
     'iptracker',
+    'django_sorting',
 )
 
 # A sample logging configuration. The only tangible logging
