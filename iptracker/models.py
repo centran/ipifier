@@ -40,40 +40,44 @@ class Record(models.Model):
   ttl = models.IntegerField()
   pri = models.IntegerField()
   changedate = models.IntegerField()
+  comment = models.CharField(max_length=255, blank=True)
 
   def __unicode__(self):
     return self.name
 
 class Ip(models.Model):
   ip = models.GenericIPAddressField()
-  record_id = models.ForeignKey('Record')
+  record_id = models.ForeignKey('Record',null=True,blank=True)
   range_id = models.ForeignKey('Range')
+  comment = models.CharField(max_length=255,blank=True)
 
   def __unicode__(self):
     return self.ip
 
 class Mac(models.Model):
-  mac = models.CharField(max_length=17)
-  record_id = models.ForeignKey('Record')
+  mac = models.CharField(max_length=17,unique=True)
+  ip_id = models.ForeignKey('Ip')
 
   def __unicode__(self):
     return self.mac
 
 class Domain(models.Model):
-  name = models.CharField(max_length=250, unique=True)
+  name = models.CharField(max_length=255, unique=True)
   slave = 'slave'
   master = 'master'
   forward = 'forward'
   type_choices = ( (master, 'master'), (slave, 'slave'), (forward, 'forward') )
   type = models.CharField(max_length=7, choices=type_choices, default=master)
+  comment = models.CharField(max_length=255, blank=True)
 
   def __unicode__(self):
     return self.name
 
 class Range(models.Model):
-  name = models.CharField(max_length=250, unique=True)
+  name = models.CharField(max_length=255, unique=True)
   start = models.GenericIPAddressField()
   end = models.GenericIPAddressField()
+  comment = models.CharField(max_length=255, blank=True)
 
   def __unicode__(self):
     return self.name

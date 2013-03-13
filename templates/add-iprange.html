@@ -3,7 +3,7 @@
 {% block title %}{{ title }} | Ipifier {% endblock %}
 
 {% block content %}
-<h1><a href="{% url add %}">Add</a> -> <a href="">Domain</a> </h1>
+<h1><a href="{% url add %}">Add</a> -> <a href="">Range</a> </h1>
 <p>Add an IP Range record</p>
 <form method="POST" action"">
 {% csrf_token %}
@@ -12,11 +12,13 @@
                 <th>NAME</th>
 		<th>STARTING IP</th>
 		<th>ENDING IP</th>
+		<th>COMMENT</th>
         </tr>
         <tr>   
                 <td>{{ form.name }}</td>
 		<td>{{ form.start }}</td>
 		<td>{{ form.end }}</td>
+		<td>{{ form.comment  }}</td>
         </tr>
 </table>
 <input id="saveForm" class="button_text" type="submit" name="submit" value="Submit" />

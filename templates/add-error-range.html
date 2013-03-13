@@ -5,5 +5,5 @@
 {% block content %}
 <h1><a href="{% url add %}">Add</a> -> <a href="">Saved</a></h1>
 <p>Entry has NOT been saved!</p>
-<p>ERROR: IP was not in know range. Create a range first.</p>
+<p>ERROR: IP was not in known range. <a href="{% url add-iprange  %}">Create a range</a> first.</p>
 {% endblock content %}

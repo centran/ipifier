@@ -35,7 +35,7 @@ def list_iprange(request):
 
 @login_required()
 def list_entries(request):
-  entries = Record.objects.all().order_by('name')
+  entries = Record.objects.all().order_by('name').select_related()
   return render_to_response('list-entries.html', {'entries': entries}, context_instance=RequestContext(request))
 
 @login_required()
@@ -136,7 +136,8 @@ def add_domain(request):
           return HttpResponseRedirect('/add/error/name')
       domain = Domain( 
         name=form.cleaned_data['name'],
-        type=form.cleaned_data['type']
+        type=form.cleaned_data['type'],
+        comment=form.cleaned_data['comment']
       )
       domain.save()
       return HttpResponseRedirect('/add/saved')
@@ -176,7 +177,8 @@ def add_iprange(request):
       range = Range(
         name=form.cleaned_data['name'],
         start=form.cleaned_data['start'],
-        end=form.cleaned_data['end']
+        end=form.cleaned_data['end'],
+        comment=form.cleaned_data['comment']
       )
       range.save()
       return HttpResponseRedirect('/add/saved')
@@ -234,7 +236,8 @@ def add_entry(request):
         ttl=form.cleaned_data['ttl'],
         domain_id = domain,
         pri = 1,
-        changedate = 1
+        changedate = 1,
+        comment=form.cleaned_data['comment']
       )
       record.save()
       ip = Ip(ip=content,record_id=record,range_id=rangeRecord)

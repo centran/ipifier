@@ -9,12 +9,18 @@
 		<thead>
 		<tr>
 			<th>NAME</th>
+			<th>TYPE</th>
+			<th>COMMENT</th>
+			<th></th>
 		</tr>
 		</thead>
 		<tbody>
 		{% for domain in all_domains %}
 		<tr>
-			<td><a href="{% url list-domains %}{{ domain.id }}"> {{ domain.name }}</a></td>
+			<td><a href="{% url list-domains %}{{ domain.id }}">{{ domain.name }}</a></td>
+			<td>{{ domain.type  }}</td>
+			<td>{{ domain.comment  }}</td>
+			<td><a href="">EDIT</a> &nbsp; <a href="">DELETE</a></td>
 		</tr>
 		{% endfor %}
 		</tbody>

@@ -30,23 +30,27 @@
 	<table id="tfhover">
 		<thead>
 		<tr>
-			<th></th>
 			<th>NAME</th>
+			<th>DOMAIN</th>
 			<th>TYPE</th>
 			<th>CONTENT</th>
 			<th>TTL</th>
 			<th>PRI</th>
+			<th>COMMENT</th>
+			<th></th>
 		</tr>
 		</thead>
 		<tbody>
 		{% for entry in entries %}
 		<tr>
-			<td><a href="{% url edit-record entry.id %}">EDIT</a> &nbsp; <a href="{% url del-record entry.id  %}">DELETE</a></td>
 			<td>{{ entry.name }}</td>
+			<td>{{ entry.domain_id }}</td>
 			<td>{{ entry.type }}</td>
 			<td>{{ entry.content }}</td>
 			<td>{{ entry.ttl }}</td>
 			<td>{{ entry.pri }}</td>
+			<td>{{ entry.comment }}</td>
+			<td><a href="{% url edit-record entry.id %}">EDIT</a> &nbsp; <a href="{% url del-record entry.id  %}">DELETE</a></td>
 		</tr>
 		{% endfor %}
 		</tbody>
