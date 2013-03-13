@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+
+{% block content %}
+<h1><a href="{% url edit %}">EDIT</a> -> <a href="">ERROR</a></h1>
+<p>DOMAIN has NOT been saved!</p>
+<p>ERROR: Name already exists..</p>
+{% endblock content %}

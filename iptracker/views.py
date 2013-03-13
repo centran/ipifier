@@ -10,6 +10,7 @@ from django.template import RequestContext
 from django.core.validators import validate_ipv46_address, validate_ipv4_address, validate_ipv6_address
 from django.core.exceptions import ValidationError
 from netaddr import *
+import datetime
 
 @login_required()
 def default(request):
@@ -93,7 +94,7 @@ def edit_record(request, record_id=1):
         ttl=form.cleaned_data['ttl'],
         domain_id = org_record.domain_id,
 	pri = org_record.pri,
-        changedate = org_record.changedate
+        comment=form.cleaned_data['comment']
       )
       record.save()
       if ip_changed:
@@ -107,11 +108,40 @@ def edit_record(request, record_id=1):
       'name': org_record.name,
       'type': org_record.type,
       'content': org_record.content,
-      'ttl': org_record.ttl
+      'ttl': org_record.ttl,
+      'comment': org_record.comment
       })
     
   record = Record.objects.get(id=record_id)
   return render_to_response('edit-record.html', {'record': record, 'id': record_id, 'form': form}, RequestContext(request))
+
+@login_required()
+def edit_domain(request, domain_id=1):
+  org_domain = Domain.objects.get(id=domain_id)
+  if request.method == 'POST':
+    form = DomainForm(request.POST)
+    domains = Domain.objects.all()
+    if form.is_valid():
+      if form.cleaned_data['name'] != org_domain.name:
+        for domain in domains:
+          if domain.name == form.cleaned_data['name']:
+            return HttpResponseRedirect('/edit/error/name')
+      domain = Domain(
+        id=domain_id,
+        name=form.cleaned_data['name'],
+        type=form.cleaned_data['type'],
+        comment=form.cleaned_data['comment']
+      )
+      domain.save()
+      return HttpResponseRedirect('/edit/record/saved')
+  else:
+    form = DomainForm(initial={
+      'name': org_domain.name,
+      'type': org_domain.type,
+      'comment': org_domain.comment
+    })
+  domain = Domain.objects.get(id=domain_id)
+  return render_to_response('edit-domain.html', {'domain': domain, 'id': domain_id, 'form': form}, RequestContext(request))
 
 @login_required()
 def edit_record_saved(request):
@@ -236,7 +266,6 @@ def add_entry(request):
         ttl=form.cleaned_data['ttl'],
         domain_id = domain,
         pri = 1,
-        changedate = 1,
         comment=form.cleaned_data['comment']
       )
       record.save()
@@ -271,6 +300,10 @@ def add_error_name(request):
 @login_required()
 def add_error_ip_exists(request):
   return render_to_response('add-error-ip-exists.html')
+
+@login_required()
+def edit_error_name(request):
+  return render_to_response('edit-error-name.html')
 
 @login_required()
 def delete(request):

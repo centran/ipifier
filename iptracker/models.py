@@ -39,7 +39,6 @@ class Record(models.Model):
   content = models.CharField(max_length=64000)
   ttl = models.IntegerField()
   pri = models.IntegerField()
-  changedate = models.IntegerField()
   comment = models.CharField(max_length=255, blank=True)
 
   def __unicode__(self):

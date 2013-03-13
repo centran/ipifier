@@ -5,8 +5,8 @@ class RecordForm(forms.Form):
   name = forms.CharField(max_length=255)
   type_choices = []
   choices = Domain.objects.all()
-  for e in choices:
-    type_choices.append( (e.id, e.name) )
+  for choice in choices:
+    type_choices.append( (choice.id, choice.name) )
   domain = forms.TypedChoiceField(choices=type_choices)
   type = forms.TypedChoiceField(choices=Record.type_choices)
   content = forms.CharField()
@@ -27,8 +27,8 @@ class RangeForm(forms.Form):
 class AddRecordForm(forms.Form):
   type_choices = []
   choices = Domain.objects.all()
-  for e in choices:
-    type_choices.append( (e.id, e.name) )
+  for choice in choices:
+    type_choices.append( (choice.id, choice.name) )
   name = forms.CharField(max_length=255)
   domain = forms.TypedChoiceField(choices=type_choices)
   type = forms.TypedChoiceField(choices=Record.type_choices)
