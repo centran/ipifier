@@ -20,7 +20,7 @@
 			<td><a href="{% url list-domains %}{{ domain.id }}">{{ domain.name }}</a></td>
 			<td>{{ domain.type  }}</td>
 			<td>{{ domain.comment  }}</td>
-			<td><a href="{% url edit-domain domain.id %}">EDIT</a> &nbsp; <a href="">DELETE</a></td>
+			<td><a href="{% url edit-domain domain.id %}">EDIT</a> &nbsp; <a href="{% url del-domain domain.id %}">DELETE</a></td>
 		</tr>
 		{% endfor %}
 		</tbody>

@@ -45,20 +45,13 @@ class Record(models.Model):
     return self.name
 
 class Ip(models.Model):
-  ip = models.GenericIPAddressField()
+  ip = models.CharField(max_length=255)
   record_id = models.ForeignKey('Record',null=True,blank=True)
   range_id = models.ForeignKey('Range')
   comment = models.CharField(max_length=255,blank=True)
-
+  mac = models.CharField(max_length=17,null=True,blank=True)
   def __unicode__(self):
     return self.ip
-
-class Mac(models.Model):
-  mac = models.CharField(max_length=17,unique=True)
-  ip_id = models.ForeignKey('Ip')
-
-  def __unicode__(self):
-    return self.mac
 
 class Domain(models.Model):
   name = models.CharField(max_length=255, unique=True)

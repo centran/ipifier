@@ -5,6 +5,7 @@ from django.contrib.auth.views import login, logout
 from django.contrib import admin
 admin.autodiscover()
 
+import iptracker.views 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/login/$', login),
@@ -25,15 +26,19 @@ urlpatterns = patterns('',
     url(r'^edit/domain/(?P<domain_id>\d+)/$', 'iptracker.views.edit_domain', name='edit-domain'),
     url(r'^del/$', 'iptracker.views.delete', name='del'),
     url(r'^del/record/(?P<record_id>\d+)/$', 'iptracker.views.del_record', name='del-record'),
+    url(r'^del/domain/(?P<domain_id>\d+)/$', 'iptracker.views.del_domain', name='del-domain'),
     url(r'^del/del/record/(?P<record_id>\d+)/$', 'iptracker.views.del_del_record', name='del-del-record'),
+    url(r'^del/del/domain/(?P<domain_id>\d+)/$', 'iptracker.views.del_del_domain', name='del-del-domain'),
     url(r'^add/$', 'iptracker.views.add', name='add'),
     url(r'^add/domain/$', 'iptracker.views.add_domain', name='add-domain'),
     url(r'^add/iprange/$', 'iptracker.views.add_iprange', name='add-iprange'),
     url(r'^add/entry$', 'iptracker.views.add_entry', name='add-entry'),
     url(r'^add/saved/$', 'iptracker.views.add_saved', name='add-saved'),
+    url(r'^add/ip/$', 'iptracker.views.add_ip', name='add-ip'),
     url(r'^add/error/ip/$', 'iptracker.views.add_error_ip', name='add-error-ip'),
     url(r'^add/error/range/$', 'iptracker.views.add_error_range', name='add-error-range'),
     url(r'^add/error/range/ip/$', 'iptracker.views.add_error_range_ip', name='add-error-range-ip'),
     url(r'^add/error/name/$', 'iptracker.views.add_error_name', name='add-error-name'),
     url(r'^add/error/ip/exists$', 'iptracker.views.add_error_ip_exists', name='add-error-ip-exists'),
+    url(r'^add/error/mac/exists$', 'iptracker.views.add_error_mac_exists', name='add-error-mac-exists'),
 )

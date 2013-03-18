@@ -3,29 +3,27 @@
 {% block title %}{{ title }} | Ipifier {% endblock %}
 
 {% block content %}
-<h1><a href="{% url add %}">Add</a> -> <a href="">Range</a> </h1>
-<p>Add an IP Range record</p>
+<h1><a href="{% url add %}">Add</a> -> <a href="">Entry</a></h1>
+<p>Add an Entry</p>
 <form method="POST" action"">
 {% csrf_token %}
 <table>
         <tr>   
-                <th>NAME</th>
-		<th>STARTING IP</th>
-		<th>ENDING IP</th>
+                <th>IP</th>
+		<th>MAC ADDRESS</th>
 		<th>COMMENT</th>
         </tr>
         <tr>   
-                <td>{{ form.name }}</td>
-		<td>{{ form.start }}</td>
-		<td>{{ form.end }}</td>
-		<td>{{ form.comment  }}</td>
+		<td>{{ form.ip }}</td>
+		<td>{{ form.mac }}</td>
+		<td>{{ form.comment }}</td>
         </tr>
 	<tr>
-		<td>{{ form.name.errors }}</td>
-		<td>{{ form.start.errors }}</td>
-		<td>{{ form.end.errors }}</td>
+		<td>{{ form.ip.errors }}</td>
+		<td>{{ form.mac.errors }}</td>
 		<td>{{ form.comment.errors }}</td>
 	</tr>
 </table>
 <input id="saveForm" class="button_text" type="submit" name="submit" value="Submit" />
+
 {% endblock content %}

@@ -18,6 +18,11 @@
 		<td>{{ form.type }}</td>
 		<td>{{ form.comment  }}</td>
         </tr>
+	<tr>
+		<td>{{ form.name.errors }}</td>
+		<td>{{ form.type.errors }}</td>
+		<td>{{ form.comment.errors }}</td>
+	</tr>
 </table>
 <input id="saveForm" class="button_text" type="submit" name="submit" value="Submit" />
 {% endblock content %}

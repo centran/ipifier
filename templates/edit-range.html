@@ -22,33 +22,13 @@
 <table>
 	<tr>
 		<th>NAME</th>
-		<th>DOMAIN</th>
-		<th>TYPE</th>
-		<th>CONTENT</th>
-		<th>PRIORITY</th>
-		<th>TTL</th>
+		<th>TYPE</td>
 		<th>COMMENT</th>
-		<th>MAC ADDRESS</th>
 	</tr>
 	<tr>
 		<td>{{ form.name }}</td>
-		<td>{{ form.domain  }}</td>
 		<td>{{ form.type }}</td>
-		<td>{{ form.content }}</td>
-		<td>{{ form.pri }}</td>
-		<td>{{ form.ttl }}</td>
 		<td>{{ form.comment }}</td>
-		<td>{{ form.mac }}</td>
-	</tr>
-	<tr>
-		<td>{{ form.name.errors }}</td>
-		<td>{{ form.domain.errors }}</td>
-		<td>{{ form.type.errors }}</td>
-		<td>{{ form.content.errors }}</td>
-		<td>{{ form.pri.errors }}</td>
-		<td>{{ form.ttl.errors }}</td>
-		<td>{{ form.comment.errors }}</td>
-		<td>{{ form.mac.errors }}</td>
 	</tr>
 </table>
 <input id="saveForm" class="button_text" type="submit" name="submit" value="Submit" />

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+{% block extrahead %}
+<script type="text/javascript" src="{% static 'jscript/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'jscript/apprise-v2.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/apprise-v2.min.css' %}" type="text/css" />
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function(){
+        $("#example").dialog({modal: true});
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<h1><a href="{% url del %}">Delete</a> -> <a href="">Domain</a></h1>
+<p>WARNING! Deleting this domain zone will delete all records associated with the domain.</p>
+Really delete? <a href="{% url del-del-domain domain.id %}">Yes</a> <a href="{% url list %}">No</a>
+<table id="tfhover">
+	<tr>   
+        	<th>NAME</th>
+                <th>TYPE</th>
+                <th>COMMENT</th>
+	</tr>
+        <tr>   
+                <td>{{ domain.name }}</td>
+                <td>{{ domain.type }}</td>
+                <td>{{ domain.comment }}</td>
+	</tr>
+</table>
+{% endblock content %}

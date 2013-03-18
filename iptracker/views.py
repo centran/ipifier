@@ -11,6 +11,7 @@ from django.core.validators import validate_ipv46_address, validate_ipv4_address
 from django.core.exceptions import ValidationError
 from netaddr import *
 import datetime
+from itertools import chain
 
 @login_required()
 def default(request):
@@ -47,8 +48,9 @@ def list_domains_entries(request, domain_id=1):
 @login_required()
 def edit_record(request, record_id=1):
   org_record = Record.objects.get(id=record_id)
+  org_ip = Ip.objects.get(record_id=record_id)
   if request.method == 'POST':
-    form = RecordForm(request.POST)
+    form = EditRecordForm(request.POST)
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       records = Record.objects.all()
@@ -58,27 +60,14 @@ def edit_record(request, record_id=1):
             if record.domain_id == domain:
               return HttpResponseRedirect('/add/error/name')
       content = form.cleaned_data['content']
-      if form.cleaned_data['type'] == 'A':
-        try:
-          validate_ipv4_address(content)
-        except ValidationError:
-          return HttpResponseRedirect('/add/error/ip')
-      if form.cleaned_data['type'] == 'AAAA':
-        try:
-          validate_ipv6_address(content)
-        except ValidationError:
-          return HttpResponseRedirect('/add/error/ip')
       ranges = Range.objects.all()
-      found = False
       rangeRecord = 0
       for range in ranges:
         r1 = IPRange(range.start, range.end)
         addrs = list(r1)
         if IPAddress(content) in addrs:
-          found = True
           rangeRecord = range
-      if not found:
-        return HttpResponseRedirect('/add/error/range')
+          break
       ip_changed = False
       if content != org_record.content:
         ip_changed = True
@@ -86,6 +75,13 @@ def edit_record(request, record_id=1):
         for ip in ips:
           if ip.ip == content:
             return HttpResponseRedirect('/add/error/ip/exists')
+      mac_changed = False
+      if form.cleaned_data['mac'] != org_ip.mac:
+        mac_changed = True
+        macs = Ip.objects.all()
+        for mac in macs:
+          if mac.mac == form.cleaned_data['mac']:
+            return HttpResponseRedirect('/add/error/mac/exists')
       record = Record(
         id=record_id,
         name=form.cleaned_data['name'],
@@ -97,19 +93,21 @@ def edit_record(request, record_id=1):
         comment=form.cleaned_data['comment']
       )
       record.save()
-      if ip_changed:
+      if ip_changed or mac_changed:
         ip = Ip.objects.get(record_id=record)
         ip.delete()
-        ip = Ip(ip=content,record_id=record,range_id=rangeRecord)
+        ip = Ip(ip=content,record_id=record,range_id=rangeRecord,mac=form.cleaned_data['mac'])
         ip.save()
       return HttpResponseRedirect('/edit/record/saved')
   else:
-    form = RecordForm(initial={
+    form = EditRecordForm(initial={
       'name': org_record.name,
       'type': org_record.type,
       'content': org_record.content,
+      'pri': org_record.pri,
       'ttl': org_record.ttl,
-      'comment': org_record.comment
+      'comment': org_record.comment,
+      'mac': org_ip.mac
       })
     
   record = Record.objects.get(id=record_id)
@@ -225,57 +223,60 @@ def list_iprange_entries(request, range_id=1):
 @login_required()
 def add_entry(request):
   if request.method == 'POST':
-    form = AddRecordForm(request.POST)
+    form = RecordForm(request.POST)
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
-      records = Record.objects.all()
-      for record in records:
-        if form.cleaned_data['name'] == record.name:
-          if record.domain_id == domain:
-            return HttpResponseRedirect('/add/error/name')  
-      content = form.cleaned_data['content']
-      if form.cleaned_data['type'] == 'A':
-        try:
-          validate_ipv4_address(content)
-        except ValidationError:
-          return HttpResponseRedirect('/add/error/ip')
-      if form.cleaned_data['type'] == 'AAAA':
-        try:
-          validate_ipv6_address(content)
-        except ValidationError:
-          return HttpResponseRedirect('/add/error/ip')
+      content=form.cleaned_data['content']
       ranges = Range.objects.all()
-      found = False
       rangeRecord = 0
       for range in ranges:
         r1 = IPRange(range.start, range.end)
         addrs = list(r1)
         if IPAddress(content) in addrs:
-          found = True
           rangeRecord = range
-      if not found:
-        return HttpResponseRedirect('/add/error/range')
-      ips = Ip.objects.all()
-      for ip in ips:
-        if ip.ip == content:
-          return HttpResponseRedirect('/add/error/ip/exists') 
+          break
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
-	content=form.cleaned_data['content'],
+	content=content,
         ttl=form.cleaned_data['ttl'],
-        domain_id = domain,
-        pri = 1,
-        comment=form.cleaned_data['comment']
+        domain_id=domain,
+        pri=form.cleaned_data['pri'],
+        comment=form.cleaned_data['comment'],
       )
       record.save()
-      ip = Ip(ip=content,record_id=record,range_id=rangeRecord)
+      ip = Ip(ip=content,record_id=record,range_id=rangeRecord,mac=form.cleaned_data['mac'])
       ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
-    form = AddRecordForm(initial={'ttl': 3600})
+    form =RecordForm(initial={'ttl': 3600,'pri': 10})
 
   return render_to_response('add-entry.html', {'form': form}, RequestContext(request))
+
+@login_required()
+def add_ip(request):
+  if request.method == 'POST':
+    form = IpForm(request.POST)
+    if form.is_valid():
+      ranges = Range.objects.all()
+      rangeRecord = 0
+      for range in ranges:
+        r1 = IPRange(range.start, range.end)
+        addrs = list(r1)
+        if IPAddress(form.cleaned_data['ip']) in addrs:
+          rangeRecord = range
+          break
+      ip = Ip(
+        ip=form.cleaned_data['ip'],
+        mac=form.cleaned_data['mac'],
+        range_id=rangeRecord,
+        comment=form.cleaned_data['comment'] 
+      )
+      ip.save()
+      return HttpResponseRedirect('/add/saved')
+  else:
+    form = IpForm()
+  return render_to_response('add-ip.html', {'form': form}, RequestContext(request))
 
 @login_required()
 def add_saved(request):
@@ -302,6 +303,10 @@ def add_error_ip_exists(request):
   return render_to_response('add-error-ip-exists.html')
 
 @login_required()
+def add_error_mac_exists(request):
+  return render_to_response('add-error-mac-exists.html')
+
+@login_required()
 def edit_error_name(request):
   return render_to_response('edit-error-name.html')
 
@@ -315,9 +320,23 @@ def del_record(request, record_id=1):
   return render_to_response('del-record.html', {'entry': entry})
 
 @login_required()
+def del_domain(request, domain_id=1):
+  domain = Domain.objects.get(id=domain_id)
+  return render_to_response('del-domain.html', {'domain': domain})
+
+@login_required()
 def del_del_record(request, record_id=1):
   ip = Ip.objects.get(record_id=record_id)
   ip.delete()
   entry = Record.objects.get(id=record_id)
   entry.delete()
+  return render_to_response('del-deleted.html')
+
+@login_required()
+def del_del_domain(request, domain_id=1):
+  domain = Domain.objects.get(id=domain_id)
+  entries = Record.objects.select_related().filter(domain_id=domain_id)
+  for entry in entries:
+    entry.delete()
+  domain.delete()
   return render_to_response('del-deleted.html')
