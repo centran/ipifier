@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+
+{% block content %}
+<h1><a href="{% url list %}">List</a> -> <a href="{% url list-ips %}">IPS</a></h1>
+{% if all_ips %}
+	<table id="tfhover">
+		<thead>
+		<tr>
+			<th>IP</th>
+			<th>MAC ADDRESS</th>
+			<th>COMMENT</th>
+			<th></th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for ip in all_ips %}
+		<tr>
+			<td>{{ ip.ip }}</td>
+			<td>{{ ip.mac }}</td>
+			<td>{{ ip.comment }}</td>
+			<td><a href="{% url edit-ip ip.id %}">EDIT</a> &nbsp; <a href="{% url del-ip ip.id %}">DELETE</a></td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<p>No IPs</p>
+{% endif %}
+{% endblock content %}

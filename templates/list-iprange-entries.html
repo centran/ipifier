@@ -6,6 +6,7 @@
 <h1><a href="{% url list %}">List</a> -> <a href="{% url list-iprange %}">IP Range</a> -> <a href="">Entry</a></h1>
 {% if entries %}
 	
+	<h1>RECORDS</h1>
 	<table id="tfhover">
 		<thead>
 		<tr>
@@ -28,6 +29,29 @@
 			<td>{{ entry.pri }}</td>
 			<td>{{ entry.comment }}</td>
 			<td><a href="{% url edit-record entry.id %}">EDIT</a> &nbsp; <a href="{% url del-record entry.id  %}">DELETE</a></td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+
+	<div style="clear:both;"></div>
+	<h1>IPS</h1>
+	<table id="tfhover">
+		<thead>
+		<tr>
+			<th>IP</th>
+			<th>MAC ADDRESS</th>
+			<th>COMMENT</th>
+			<th></th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for ip in ips %}
+		<tr>
+			<td>{{ ip.ip }}</td>
+			<td>{{ ip.mac }}</td>
+			<td>{{ ip.comment }}</td>
+			<td><a href="{% url edit-ip ip.id %}">EDIT</a> &nbsp; <a href="{% url del-ip ip.id  %}">DELETE</a></td>
 		</tr>
 		{% endfor %}
 		</tbody>

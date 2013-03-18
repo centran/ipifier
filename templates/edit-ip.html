@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+{% block extrahead %}
+<script type="text/javascript" src="{% static 'jscript/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'jscript/apprise-v2.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/apprise-v2.min.css' %}" type="text/css" />
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function(){
+        $("#example").dialog({modal: true});
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<h1><a href="{% url edit %}">Edit</a> -> <a href="">IP</a></h1>
+
+<form method="POST" action"">
+{% csrf_token %}
+<table>
+	<tr>
+		<th>IP</th>
+		<th>MAC ADDRESS</td>
+		<th>COMMENT</th>
+	</tr>
+	<tr>
+		<td>{{ form.ip }}</td>
+		<td>{{ form.mac }}</td>
+		<td>{{ form.comment }}</td>
+	</tr>
+        <tr>
+		<td>{{ form.ip.errors }}</td>
+		<td>{{ form.mac.errors }}</td>
+		<td>{{ form.comment.errors }}</td>
+	</tr>
+</table>
+<input id="saveForm" class="button_text" type="submit" name="submit" value="Submit" />
+{% endblock content %}

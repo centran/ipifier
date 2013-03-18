@@ -201,3 +201,50 @@ class IpForm(forms.Form):
         self.errors['mac'] = self.error_class(['MAC already exists'])
         del cleaned_data['mac']  
     return cleaned_data
+
+class EditIpForm(forms.Form):
+  ip = forms.CharField()
+  mac = forms.CharField(max_length=17,min_length=17,required=False)
+  comment = forms.CharField()
+  def clean(self):
+    cleaned_data = super(EditIpForm, self).clean()
+    ip = cleaned_data.get('ip')
+    mac = cleaned_data.get('mac')
+    ips = Ip.objects.all()
+    #fix a bug where validate_ipv6_address cannot process NoneType
+    #So instead of passing None we pass 1 witch is invalid as well
+    if ip == None:
+      ip = '1'
+    if mac == None:
+      mac = 'a'
+    ip_valid = True
+    try:
+      validate_ipv46_address(ip)
+    except ValidationError:
+      self.errors['ip'] = self.error_class(['Not an IP address'])
+      del cleaned_data['ip']
+      ip_valid = False
+    except AddrFormatError:
+      self.errors['ip'] = self.error_class(['Not an IP address'])
+      del cleaned_data['ip']
+      ip_valid = False
+    ranges = Range.objects.all()
+    found = False
+    if ip_valid:
+      for range in ranges:
+        r = IPRange(range.start, range.end)
+        addrs = list(r)
+        if IPAddress(ip) in addrs:
+          found = True
+          break
+    if not found and ip_valid:
+      self.errors['ip'] = self.error_class(['IP is not within a known range'])
+      del cleaned_data['ip']
+      ip_valid = False
+    if not re.match("[0-9a-f]{2}([\.\-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()):
+      self.errors['mac'] = self.error_class(['Not a MAC address'])
+    m = re.sub("[.:-]", "", mac)
+    m = m.lower()
+    mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
+    cleaned_data['mac'] = mac
+    return cleaned_data
