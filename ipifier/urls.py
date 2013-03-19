@@ -45,4 +45,6 @@ urlpatterns = patterns('',
     url(r'^add/error/name/$', 'iptracker.views.add_error_name', name='add-error-name'),
     url(r'^add/error/ip/exists$', 'iptracker.views.add_error_ip_exists', name='add-error-ip-exists'),
     url(r'^add/error/mac/exists$', 'iptracker.views.add_error_mac_exists', name='add-error-mac-exists'),
+    url(r'^search/global/$', 'iptracker.views.search_global', name='search-global'),
+    url(r'^search/ip/$', 'iptracker.views.search_ip', name='search-ip'),
 )

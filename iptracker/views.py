@@ -408,3 +408,11 @@ def del_del_ip(request, ip_id):
   ip = Ip.objects.get(id=ip_id)
   ip.delete()
   return render_to_response('del-deleted.html')
+
+@login_required()
+def search_global(request):
+  return render_to_response('search-global.html')
+
+@login_required()
+def search_ip(request):
+  return render_to_response('search-ip.html')
