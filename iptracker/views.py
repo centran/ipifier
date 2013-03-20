@@ -202,6 +202,30 @@ def edit_ip(request, ip_id=1):
   return render_to_response('edit-ip.html', {'form': form},RequestContext(request))
 
 @login_required()
+def edit_iprange(request, range_id=1):
+  org_range = Range.objects.get(id=range_id)
+  if request.method == 'POST':
+    form = EditRangeForm(request.POST)
+    if form.is_valid():
+      range = Range(
+        id = org_range.id,
+        name = form.cleaned_data['name'],
+        start = org_range.start,
+        end = org_range.end,
+        comment = form.cleaned_data['comment']
+      )
+      range.save()
+      return HttpResponseRedirect('/edit/record/saved')
+  else:
+    form = EditRangeForm(initial={
+      'name': org_range.name,
+      'start': org_range.start,
+      'end': org_range.end,
+      'comment': org_range.comment
+    })
+  return render_to_response('edit-iprange.html', {'form': form}, RequestContext(request))
+
+@login_required()
 def edit_record_saved(request):
   return render_to_response('edit-record-saved.html')
 
@@ -239,29 +263,6 @@ def add_iprange(request):
   if request.method == 'POST':
     form = RangeForm(request.POST)
     if form.is_valid():
-      ranges = Range.objects.all()
-      for range in ranges:
-        if range.name == form.cleaned_data['name']:
-          return HttpResponseRedirect('/add/error/name')
-      try:
-        validate_ipv46_address(form.cleaned_data['start'])
-      except ValidationError:
-        return HttpResponseRedirect('/add/error/ip')
-      try:
-        validate_ipv46_address(form.cleaned_data['end'])
-      except ValidationError:
-        return HttpResponseRedirect('/add/error/ip')
-      ranges = Range.objects.all()
-      found = False
-      for range in ranges:
-        r1 = IPRange(range.start, range.end)
-        addrs = list(r1)
-        if IPAddress(form.cleaned_data['start']) in addrs:
-          found = True
-        if IPAddress(form.cleaned_data['end']) in addrs:
-          found = True
-      if found:
-        return HttpResponseRedirect('/add/error/range/ip')
       range = Range(
         name=form.cleaned_data['name'],
         start=form.cleaned_data['start'],

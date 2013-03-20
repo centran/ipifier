@@ -25,7 +25,7 @@
 			<td>{{ range.start }}</td>
 			<td>{{ range.end }}</td>
 			<td>{{ range.comment  }}</td>
-			<td><a href="">EDIT</a> &nbsp; <a href="">DELETE</a></td>
+			<td><a href="{% url edit-iprange range.id %}">EDIT</a> &nbsp; <a href="">DELETE</a></td>
 		</tr>
 		{% endfor %}
 		</tbody>

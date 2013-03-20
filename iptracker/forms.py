@@ -148,6 +148,52 @@ class RangeForm(forms.Form):
   start = forms.CharField()
   end = forms.CharField()
   comment = forms.CharField(required=False)
+  def clean(self):
+    cleaned_data = super(RangeForm, self).clean()
+    name = cleaned_data.get('name')
+    start = cleaned_data.get('start')
+    end = cleaned_data.get('end')
+    if start == None:
+      start = '1'
+    if end == None:
+      end = '1'
+    invalid = False
+    try:
+      validate_ipv46_address(start)
+    except ValidationError:
+      self.errors['start'] = self.error_class(['Not an IP Address'])
+      invalid = True
+    try:
+      validate_ipv46_address(end)
+    except ValidationError:
+      self.errors['end'] = self.error_class(['Not an IP Address'])
+      invalid = True
+    ranges = Range.objects.all()
+    for range in ranges:
+      if range.name == name:
+        self.errors['name'] = self.error_class(['Name already exists'])
+        del cleaned_data['name']
+      r = IPRange(range.start, range.end)
+      addrs = list(r)
+      if not invalid and IPAddress(start) in addrs:
+        self.errors['start'] = self.error_class(['IP is within another range']) 
+        del cleaned_data['start']
+      if not invalid and IPAddress(end) in addrs:
+        self.errors['end'] = self.error_class(['IP is within another range'])
+        del cleaned_data['end']
+    if not invalid and IPAddress(start) > IPAddress(end):
+      self.errors['start'] = self.error_class(['IP starting address is greater then ending address']) 
+      del cleaned_data['start']
+    return cleaned_data
+
+class EditRangeForm(forms.Form):
+  name = forms.CharField(max_length=255)
+  start = forms.CharField(widget=forms.TextInput(attrs={'class':'disabled', 'readonly':'readonly'}))
+  end = forms.CharField(widget=forms.TextInput(attrs={'class':'disabled', 'readonly':'readonly'}))
+  comment = forms.CharField(required=False)
+  def clean(self):
+    cleaned_data = super(EditRangeForm, self).clean()
+    return cleaned_data
 
 class IpForm(forms.Form):
   ip = forms.CharField()
