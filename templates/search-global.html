@@ -4,7 +4,132 @@
 
 {% block content %}
 <h1><a href="{% url search %}">Search</a> -> <a href="">Global</a> </h1>
+<div>
+<form method="POST" action="">
+{% csrf_token %}
 
-<p>Global Search</p>
+{{ form.term.errors }}
+{{ form.term }}
 
+<input id="saveForm" class="button_text" type="submit" name="submit" value="Submit" />
+</div>
+<hr />
+<h1>RECORDS</h1>
+{% if entries %}
+
+        <table id="tfhover">
+                <thead>
+                <tr>   
+                        <th>NAME</th>
+                        <th>DOMAIN</th>
+                        <th>TYPE</th>
+                        <th>CONTENT</th>
+                        <th>TTL</th>
+                        <th>PRI</th>
+                        <th>COMMENT</th>
+                        <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for entry in entries %}
+                <tr>   
+                        <td>{{ entry.name }}</td>
+                        <td>{{ entry.domain_id }}</td>
+                        <td>{{ entry.type }}</td>
+                        <td>{{ entry.content }}</td>
+                        <td>{{ entry.ttl }}</td>
+                        <td>{{ entry.pri }}</td>
+                        <td>{{ entry.comment }}</td>
+                        <td><a href="{% url edit-record entry.id %}">EDIT</a> &nbsp; <a href="{% url del-record entry.id  %}">DELETE</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+
+{% else %}
+        No entries found
+{% endif %}
+<div style="clear:both;"></div>
+<hr />
+<h1>DOMAINS</h1>
+{% if all_domains %}
+        <table id="tfhover">
+                <thead>
+                <tr>   
+                        <th>NAME</th>
+                        <th>TYPE</th>
+                        <th>COMMENT</th>
+                        <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for domain in all_domains %}
+                <tr>   
+                        <td><a href="{% url list-domains %}{{ domain.id }}">{{ domain.name }}</a></td>
+                        <td>{{ domain.type  }}</td>
+                        <td>{{ domain.comment  }}</td>
+                        <td><a href="{% url edit-domain domain.id %}">EDIT</a> &nbsp; <a href="{% url del-domain domain.id %}">DELETE</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+{% else %}
+        <p>No domains</p>
+{% endif %}
+<div style="clear:both;"></div>
+<hr />
+<h1>IP RANGE</h1>
+{% if all_ranges %}
+        <table id="tfhover">
+                <thead>
+                <tr>   
+                        <th>NAME</th>
+                        <th>STARTING IP</th>
+                        <th>ENDING IP</th>
+                        <th>COMMENT</th>
+                        <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for range in all_ranges %}
+                <tr>   
+                        <td><a href="{% url list-iprange %}{{ range.id }}"> {{ range.name }}</a></td>
+                        <td>{{ range.start }}</td>
+                        <td>{{ range.end }}</td>
+                        <td>{{ range.comment  }}</td>
+                        <td><a href="">EDIT</a> &nbsp; <a href="">DELETE</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+{% else %}
+        <p>No Ranges</p>
+{% endif %}
+<div style="clear:both;"></div>
+<hr />
+<h1>IP</h1>
+{% if all_ips %}
+        <table id="tfhover">
+                <thead>
+                <tr>   
+                        <th>IP</th>
+                        <th>MAC ADDRESS</th>
+                        <th>COMMENT</th>
+                        <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ip in all_ips %}
+                <tr>   
+                        <td>{{ ip.ip }}</td>
+                        <td>{{ ip.mac }}</td>
+                        <td>{{ ip.comment }}</td>
+                        <td><a href="{% url edit-ip ip.id %}">EDIT</a> &nbsp; <a href="{% url del-ip ip.id %}">DELETE</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+{% else %}
+        <p>No IPs</p>
+{% endif %}
 {% endblock content %}

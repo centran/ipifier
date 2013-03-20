@@ -61,19 +61,20 @@ class RecordForm(forms.Form):
     if not found and ip_valid:
       self.errors['content'] = self.error_class(['IP is not within a known range'])
       ip_valid = False
-    if not re.match("[0-9a-f]{2}([.-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()): 
-      self.errors['mac'] = self.error_class(['Not a MAC address'])
-      del cleaned_data['mac']
-    m = re.sub("[.:-]", "", mac)
-    m = m.lower()
-    mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
-    cleaned_data['mac'] = mac
+    if mac:
+      if not re.match("[0-9a-f]{2}([.-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()): 
+        self.errors['mac'] = self.error_class(['Not a MAC address'])
+        del cleaned_data['mac']
+      m = re.sub("[.:-]", "", mac)
+      m = m.lower()
+      mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
+      cleaned_data['mac'] = mac
     ips = Ip.objects.all()
     for ip in ips:
       if content == ip.ip and ip_valid:
         self.errors['content'] = self.error_class(['IP already exists'])
         ip_valid = False
-      if mac == ip.mac:
+      if mac == ip.mac and mac:
         self.errors['mac'] = self.error_class(['MAC already exists'])  
     return cleaned_data
 
@@ -247,4 +248,40 @@ class EditIpForm(forms.Form):
     m = m.lower()
     mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
     cleaned_data['mac'] = mac
+    return cleaned_data
+
+class SearchForm(forms.Form):
+  term = forms.CharField()
+
+class IpSearchForm(forms.Form):
+  term = forms.CharField()
+  def clean(self):
+    cleaned_data = super(IpSearchForm, self).clean()
+    term = cleaned_data.get('term')
+    ip_valid = True
+    if term == None:
+      term = '1'
+    try:
+      validate_ipv46_address(term)
+    except ValidationError:
+      self.errors['term'] = self.error_class(['Not an IP address'])
+      del cleaned_data['term']
+      ip_valid = False
+    except AddrFormatError:
+      self.errors['term'] = self.error_class(['Not an IP address'])
+      del cleaned_data['term']
+      ip_valid = False
+    ranges = Range.objects.all()
+    found = False
+    if ip_valid:
+      for range in ranges:
+        r = IPRange(range.start, range.end)
+        addrs = list(r)
+        if IPAddress(term) in addrs:
+          found = True
+          break
+    if not found and ip_valid:
+      self.errors['term'] = self.error_class(['IP is not within a known range'])
+      del cleaned_data['term']
+      ip_valid = False
     return cleaned_data

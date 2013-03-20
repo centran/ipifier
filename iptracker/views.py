@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 from netaddr import *
 import datetime
 from itertools import chain
+from django.db.models import Q
 
 @login_required()
 def default(request):
@@ -308,6 +309,39 @@ def add_entry(request):
   return render_to_response('add-entry.html', {'form': form}, RequestContext(request))
 
 @login_required()
+def add_entry_ip(request, ip):
+  if request.method == 'POST':
+    form = RecordForm(request.POST)
+    if form.is_valid():
+      domain = Domain.objects.get(id=form.cleaned_data['domain'])
+      content=form.cleaned_data['content']
+      ranges = Range.objects.all()
+      rangeRecord = 0
+      for range in ranges:
+        r1 = IPRange(range.start, range.end)
+        addrs = list(r1)
+        if IPAddress(content) in addrs:
+          rangeRecord = range
+          break
+      record = Record(
+        name=form.cleaned_data['name'],
+        type=form.cleaned_data['type'],
+	content=content,
+        ttl=form.cleaned_data['ttl'],
+        domain_id=domain,
+        pri=form.cleaned_data['pri'],
+        comment=form.cleaned_data['comment'],
+      )
+      record.save()
+      ip = Ip(ip=content,record_id=record,range_id=rangeRecord,mac=form.cleaned_data['mac'])
+      ip.save()
+      return HttpResponseRedirect('/add/saved')
+  else:
+    form = RecordForm(initial={'content': ip, 'ttl': 3600,'pri': 10})
+
+  return render_to_response('add-entry.html', {'form': form}, RequestContext(request))
+
+@login_required()
 def add_ip(request):
   if request.method == 'POST':
     form = IpForm(request.POST)
@@ -411,8 +445,51 @@ def del_del_ip(request, ip_id):
 
 @login_required()
 def search_global(request):
-  return render_to_response('search-global.html')
+  if request.method == 'POST':
+    form = SearchForm(request.POST)
+    if form.is_valid():
+      term = form.cleaned_data['term']
+      entries = Record.objects.all().filter( Q(name__contains=term) | Q(content__contains=term) | Q(comment__contains=term) )
+      domains = Domain.objects.all().filter( Q(name__contains=term) | Q(comment__contains=term) )
+      ranges = Range.objects.all().filter( Q(name__contains=term) | Q(comment__contains=term) | Q(start__contains=term) | Q(end__contains=term) )
+      ips = Ip.objects.all().filter( Q(ip__contains=term) | Q(mac__contains=term) | Q(comment__contains=term) )
+      return render_to_response('search-global.html', {
+        'form': form, 
+        'entries': entries,
+        'all_domains': domains,
+        'all_ranges': ranges,
+        'all_ips': ips
+      }, RequestContext(request))
+  else:
+    form = SearchForm()
+  return render_to_response('search-global.html', {'form': form}, RequestContext(request))
 
 @login_required()
 def search_ip(request):
-  return render_to_response('search-ip.html')
+  if request.method== 'POST':
+    form = IpSearchForm(request.POST)
+    if form.is_valid():
+      term = form.cleaned_data['term']
+      ranges = Range.objects.all()
+      range = 0
+      for r in ranges:
+        range = IPRange(r.start, r.end)
+        addrs = list(range)
+        if IPAddress(term) in addrs:
+          break
+      range = IPRange(term, range[-1])
+      ips = Ip.objects.all()
+      ip_list = []
+      for ip in range:
+        ip_list.append(str(ip))
+        for i in ips:
+          if IPAddress(i.ip) == ip:
+            ip_list.pop()
+            break
+      return render_to_response('search-ip.html', {
+        'form': form,
+        'ip_list': ip_list[0:5]
+      }, RequestContext(request))
+  else:
+    form = IpSearchForm()
+  return render_to_response('search-ip.html', {'form': form}, RequestContext(request))
