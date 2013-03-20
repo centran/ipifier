@@ -232,19 +232,20 @@ class IpForm(forms.Form):
       self.errors['ip'] = self.error_class(['IP is not within a known range'])
       del cleaned_data['ip']
       ip_valid = False
-    if not re.match("[0-9a-f]{2}([\.\-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()):
-      self.errors['mac'] = self.error_class(['Not a MAC address'])
-      del cleaned_data['mac']
-    m = re.sub("[.:-]", "", mac)
-    m = m.lower()
-    mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
-    cleaned_data['mac'] = mac
+    if mac:
+      if not re.match("[0-9a-f]{2}([\.\-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()):
+        self.errors['mac'] = self.error_class(['Not a MAC address'])
+        del cleaned_data['mac']
+      m = re.sub("[.:-]", "", mac)
+      m = m.lower()
+      mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
+      cleaned_data['mac'] = mac
     for i in ips:
       if i.ip == ip and ip_valid:
         self.errors['ip'] = self.error_class(['IP already exists'])
         del cleaned_data['ip']
         ip_valid = False
-      if mac == i.mac:
+      if mac == i.mac and mac:
         self.errors['mac'] = self.error_class(['MAC already exists'])
         del cleaned_data['mac']  
     return cleaned_data

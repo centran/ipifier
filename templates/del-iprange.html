@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+{% block extrahead %}
+<script type="text/javascript" src="{% static 'jscript/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'jscript/apprise-v2.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/apprise-v2.min.css' %}" type="text/css" />
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function(){
+        $("#example").dialog({modal: true});
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<h1><a href="{% url del %}">Delete</a> -> <a href="">Domain</a></h1>
+<p>WARNING! Deleting this range will delete ALL RECORDS and IPS associated with the range.</p>
+Really delete? <a href="{% url del-del-iprange range.id %}">Yes</a> <a href="{% url list %}">No</a>
+<table id="tfhover">
+	<tr>   
+        	<th>NAME</th>
+                <th>STARTING IP</th>
+		<th>ENDING IP</th>
+                <th>COMMENT</th>
+	</tr>
+        <tr>   
+                <td>{{ range.name }}</td>
+                <td>{{ range.start }}</td>
+		<td>{{ range.end }}</td>
+                <td>{{ range.comment }}</td>
+	</tr>
+</table>
+{% endblock content %}

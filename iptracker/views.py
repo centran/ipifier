@@ -58,7 +58,7 @@ def list_ips(request):
   return render_to_response('list-ips.html', {'all_ips': all_ips})
 
 @login_required()
-def edit_record(request, record_id=1):
+def edit_record(request, record_id=0):
   org_record = Record.objects.get(id=record_id)
   org_ip = Ip.objects.get(record_id=record_id)
   if request.method == 'POST':
@@ -126,7 +126,7 @@ def edit_record(request, record_id=1):
   return render_to_response('edit-record.html', {'record': record, 'id': record_id, 'form': form}, RequestContext(request))
 
 @login_required()
-def edit_domain(request, domain_id=1):
+def edit_domain(request, domain_id=0):
   org_domain = Domain.objects.get(id=domain_id)
   if request.method == 'POST':
     form = DomainForm(request.POST)
@@ -154,7 +154,7 @@ def edit_domain(request, domain_id=1):
   return render_to_response('edit-domain.html', {'domain': domain, 'id': domain_id, 'form': form}, RequestContext(request))
 
 @login_required()
-def edit_ip(request, ip_id=1):
+def edit_ip(request, ip_id=0):
   org_ip = Ip.objects.get(id=ip_id)
   if org_ip.record_id:
     return HttpResponseRedirect('/edit/record/'+str(org_ip.record_id.id))
@@ -409,17 +409,22 @@ def del_record(request, record_id=1):
   return render_to_response('del-record.html', {'entry': entry})
 
 @login_required()
-def del_domain(request, domain_id=1):
+def del_domain(request, domain_id=0):
   domain = Domain.objects.get(id=domain_id)
   return render_to_response('del-domain.html', {'domain': domain})
 
 @login_required()
-def del_ip(request, ip_id=1):
+def del_ip(request, ip_id=0):
   ip = Ip.objects.get(id=ip_id)
   if ip.record_id:
     entry = Record.objects.get(id=ip.record_id.id)
     return render_to_response('del-record.html', {'entry': entry})
   return render_to_response('del-ip.html', {'ip': ip})
+
+@login_required()
+def del_iprange(request, range_id=0):
+  range = Range.objects.get(id=range_id)
+  return render_to_response('del-iprange.html', {'range': range})
 
 @login_required()
 def del_del_record(request, record_id=1):
@@ -442,6 +447,18 @@ def del_del_domain(request, domain_id=1):
 def del_del_ip(request, ip_id):
   ip = Ip.objects.get(id=ip_id)
   ip.delete()
+  return render_to_response('del-deleted.html')
+
+@login_required()
+def del_del_iprange(request, range_id=0):
+  range = Range.objects.get(id=range_id)
+  ips = Ip.objects.all().filter(range_id=range_id)
+  for ip in ips:
+    if ip.record_id:
+      record = Record.objects.get(id=ip.record_id.id)
+      record.delete()
+    ip.delete()
+  range.delete()
   return render_to_response('del-deleted.html')
 
 @login_required()
