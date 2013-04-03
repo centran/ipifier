@@ -12,8 +12,7 @@
 		<thead>
 		<tr>
 			<th>NAME</th>
-			<th>STARTING IP</th>
-			<th>ENDING IP</th>
+			<th>CIDR</th>
 			<th>COMMENT</th>
 			<th></th>
 		</tr>
@@ -22,8 +21,7 @@
 		{% for range in all_ranges %}
 		<tr>
 			<td><a href="{% url list-iprange %}{{ range.id }}"> {{ range.name }}</a></td>
-			<td>{{ range.start }}</td>
-			<td>{{ range.end }}</td>
+			<td>{{ range.cidr }}</td>
 			<td>{{ range.comment  }}</td>
 			<td><a href="{% url edit-iprange range.id %}">EDIT</a> &nbsp; <a href="{% url del-iprange range.id %}">DELETE</a></td>
 		</tr>

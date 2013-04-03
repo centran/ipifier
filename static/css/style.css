@@ -124,6 +124,7 @@ dd {
 
 #nav {
         width: 90%;
+        height: 20px;
         background-color: #348075;
         margin: 0px auto;
         padding: 1em;
@@ -138,7 +139,7 @@ dd {
 #nav li {
         float: left;
         margin: 5px;
-        padding: .5em
+        padding: .5em;
 }
 
 #nav a {

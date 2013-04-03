@@ -21,14 +21,12 @@ Really delete? <a href="{% url del-del-iprange range.id %}">Yes</a> <a href="{% 
 <table id="tfhover">
 	<tr>   
         	<th>NAME</th>
-                <th>STARTING IP</th>
-		<th>ENDING IP</th>
+                <th>CIDR</th>
                 <th>COMMENT</th>
 	</tr>
         <tr>   
                 <td>{{ range.name }}</td>
-                <td>{{ range.start }}</td>
-		<td>{{ range.end }}</td>
+                <td>{{ range.cidr }}</td>
                 <td>{{ range.comment }}</td>
 	</tr>
 </table>

@@ -53,7 +53,7 @@ class RecordForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPRange(range.start, range.end)
+        r = IPNetwork(range.cidr)
         addrs = list(r)
         if IPAddress(content) in addrs:
           found = True
@@ -121,7 +121,7 @@ class EditRecordForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPRange(range.start, range.end)
+        r = IPNetwork(range.cidr)
         addrs = list(r)
         if IPAddress(content) in addrs:
           found = True
@@ -145,51 +145,29 @@ class DomainForm(forms.Form):
 
 class RangeForm(forms.Form):
   name = forms.CharField(max_length=255)
-  start = forms.CharField()
-  end = forms.CharField()
+  cidr = forms.CharField(max_length=18)
   comment = forms.CharField(required=False)
   def clean(self):
     cleaned_data = super(RangeForm, self).clean()
     name = cleaned_data.get('name')
-    start = cleaned_data.get('start')
-    end = cleaned_data.get('end')
-    if start == None:
-      start = '1'
-    if end == None:
-      end = '1'
-    invalid = False
-    try:
-      validate_ipv46_address(start)
-    except ValidationError:
-      self.errors['start'] = self.error_class(['Not an IP Address'])
-      invalid = True
-    try:
-      validate_ipv46_address(end)
-    except ValidationError:
-      self.errors['end'] = self.error_class(['Not an IP Address'])
-      invalid = True
-    ranges = Range.objects.all()
-    for range in ranges:
-      if range.name == name:
-        self.errors['name'] = self.error_class(['Name already exists'])
+    cidr = cleaned_data.get('cidr')
+    names = Range.objects.all()
+    for n in names:
+      if n == name:
+        self.errors['name'] = self.error_class(['Range name already exists'])
         del cleaned_data['name']
-      r = IPRange(range.start, range.end)
-      addrs = list(r)
-      if not invalid and IPAddress(start) in addrs:
-        self.errors['start'] = self.error_class(['IP is within another range']) 
-        del cleaned_data['start']
-      if not invalid and IPAddress(end) in addrs:
-        self.errors['end'] = self.error_class(['IP is within another range'])
-        del cleaned_data['end']
-    if not invalid and IPAddress(start) > IPAddress(end):
-      self.errors['start'] = self.error_class(['IP starting address is greater then ending address']) 
-      del cleaned_data['start']
+    if cidr == None:
+      cidr = '1'
+    try:
+      network = IPNetwork(cidr)
+    except AddrFormatError:
+      self.errors['cidr'] = self.error_class(['Not a valid cidr notation'])
+      del cleaned_data['cidr']
     return cleaned_data
 
 class EditRangeForm(forms.Form):
   name = forms.CharField(max_length=255)
-  start = forms.CharField(widget=forms.TextInput(attrs={'class':'disabled', 'readonly':'readonly'}))
-  end = forms.CharField(widget=forms.TextInput(attrs={'class':'disabled', 'readonly':'readonly'}))
+  cidr = forms.CharField(widget=forms.TextInput(attrs={'class':'disabled', 'readonly':'readonly'}))
   comment = forms.CharField(required=False)
   def clean(self):
     cleaned_data = super(EditRangeForm, self).clean()
@@ -209,25 +187,37 @@ class IpForm(forms.Form):
     if ip == None:
       ip = '1'
     ip_valid = True
-    try:
-      validate_ipv46_address(ip)
-    except ValidationError:
-      self.errors['ip'] = self.error_class(['Not an IP address'])
-      del cleaned_data['ip']
-      ip_valid = False
-    except AddrFormatError:
-      self.errors['ip'] = self.error_class(['Not an IP address'])
-      del cleaned_data['ip']
-      ip_valid = False
+    if len(ip)>3 and (ip[-2] == '/' or ip[-3] == '/'):
+      try:
+        network = IPNetwork(ip)
+      except AddrFormatError:
+        self.errors['ip'] = self.error_class(['Not a valid cidr notation'])
+        ip_valid = False
+        del cleaned_data['ip']
+    else:
+      try:
+        validate_ipv46_address(ip)
+      except ValidationError:
+        self.errors['ip'] = self.error_class(['Not an IP address'])
+        ip_valid = False
+      except AddrFormatError:
+        self.errors['ip'] = self.error_class(['Not an IP address'])
+        ip_valid = False
     ranges = Range.objects.all()
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPRange(range.start, range.end)
+        r = IPNetwork(range.cidr)
         addrs = list(r)
-        if IPAddress(ip) in addrs:
-          found = True
-          break
+        if len(ip)>3 and (ip[-2] == '/' or ip[-3] == '/'):
+          for i in IPNetwork(ip):
+            if i in addrs:
+              found = True
+              break
+        else:
+          if IPAddress(ip) in addrs:
+            found = True
+            break
     if not found and ip_valid:
       self.errors['ip'] = self.error_class(['IP is not within a known range'])
       del cleaned_data['ip']
@@ -240,14 +230,25 @@ class IpForm(forms.Form):
       m = m.lower()
       mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
       cleaned_data['mac'] = mac
-    for i in ips:
-      if i.ip == ip and ip_valid:
-        self.errors['ip'] = self.error_class(['IP already exists'])
-        del cleaned_data['ip']
-        ip_valid = False
-      if mac == i.mac and mac:
-        self.errors['mac'] = self.error_class(['MAC already exists'])
-        del cleaned_data['mac']  
+    if len(ip) > 3 and (ip[-2] == '/' or ip[-3] == '/'):
+      for i in ips:
+        for j in list(IPNetwork(ip)):
+          if IPAddress(i.ip) == j and ip_valid:
+            self.errors['ip'] = self.error_class(['IP already exists'])
+            del cleaned_data['ip']
+            ip_valid = False
+        if mac == i.mac and mac:
+          self.errors['mac'] = self.error_class(['MAC already exists'])
+          del cleaned_data['mac']  
+    else:
+      for i in ips:
+        if i.ip == ip and ip_valid:
+          self.errors['ip'] = self.error_class(['IP already exists'])
+          del cleaned_data['ip']
+          ip_valid = False
+        if mac == i.mac and mac:
+          self.errors['mac'] = self.error_class(['MAC already exists'])
+          del cleaned_data['mac']  
     return cleaned_data
 
 class EditIpForm(forms.Form):
@@ -280,7 +281,7 @@ class EditIpForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPRange(range.start, range.end)
+        r = IPNetwork(range.cidr)
         addrs = list(r)
         if IPAddress(ip) in addrs:
           found = True
@@ -322,7 +323,7 @@ class IpSearchForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPRange(range.start, range.end)
+        r = IPNetwork(range.cidr)
         addrs = list(r)
         if IPAddress(term) in addrs:
           found = True

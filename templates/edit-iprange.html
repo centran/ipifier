@@ -22,20 +22,17 @@
 <table>
 	<tr>
 		<th>NAME</th>
-		<th>STARTING IP</th>
-		<th>ENDING IP</th>
+		<th>CIDR</th>
 		<th>COMMENT</th>
 	</tr>
 	<tr>
 		<td>{{ form.name }}</td>
-		<td>{{ form.start }}</td>
-		<td>{{ form.end }}</td>
+		<td>{{ form.cidr }}</td>
 		<td>{{ form.comment }}</td>
 	</tr>
         <tr>
 		<td>{{ form.name.errors }}</td>
-		<td>{{ form.start.errors }}</td>
-		<td>{{ form.end.errors }}</td>
+		<td>{{ form.cidr.errors }}</td>
 		<td>{{ form.comment.errors }}</td>
 	</tr>
 </table>

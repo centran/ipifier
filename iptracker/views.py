@@ -75,7 +75,7 @@ def edit_record(request, record_id=0):
       ranges = Range.objects.all()
       rangeRecord = 0
       for range in ranges:
-        r1 = IPRange(range.start, range.end)
+        r1 = IPNetwork(range.cidr)
         addrs = list(r1)
         if IPAddress(content) in addrs:
           rangeRecord = range
@@ -165,7 +165,7 @@ def edit_ip(request, ip_id=0):
       rangeRecord = 0
       ip = form.cleaned_data['ip']
       for range in ranges:
-        r1 = IPRange(range.start, range.end)
+        r1 = IPNetwork(range.cidr)
         addrs = list(r1)
         if IPAddress(ip) in addrs:
           rangeRecord = range
@@ -207,11 +207,15 @@ def edit_iprange(request, range_id=1):
   if request.method == 'POST':
     form = EditRangeForm(request.POST)
     if form.is_valid():
+      name = form.cleaned_data['name']
+      names = Range.objects.all()
+      for n in names:
+        if name != org_range.name and n == name:
+          return HttpResponseRedirect('/edit/error/name')
       range = Range(
         id = org_range.id,
         name = form.cleaned_data['name'],
-        start = org_range.start,
-        end = org_range.end,
+        cidr = org_range.cidr,
         comment = form.cleaned_data['comment']
       )
       range.save()
@@ -219,8 +223,7 @@ def edit_iprange(request, range_id=1):
   else:
     form = EditRangeForm(initial={
       'name': org_range.name,
-      'start': org_range.start,
-      'end': org_range.end,
+      'cidr': org_range.cidr,
       'comment': org_range.comment
     })
   return render_to_response('edit-iprange.html', {'form': form}, RequestContext(request))
@@ -265,8 +268,7 @@ def add_iprange(request):
     if form.is_valid():
       range = Range(
         name=form.cleaned_data['name'],
-        start=form.cleaned_data['start'],
-        end=form.cleaned_data['end'],
+	cidr=form.cleaned_data['cidr'],
         comment=form.cleaned_data['comment']
       )
       range.save()
@@ -286,7 +288,7 @@ def add_entry(request):
       ranges = Range.objects.all()
       rangeRecord = 0
       for range in ranges:
-        r1 = IPRange(range.start, range.end)
+        r1 = IPNetwork(range.cidr)
         addrs = list(r1)
         if IPAddress(content) in addrs:
           rangeRecord = range
@@ -319,7 +321,7 @@ def add_entry_ip(request, ip):
       ranges = Range.objects.all()
       rangeRecord = 0
       for range in ranges:
-        r1 = IPRange(range.start, range.end)
+        r1 = IPNetowrk(range.cidr)
         addrs = list(r1)
         if IPAddress(content) in addrs:
           rangeRecord = range
@@ -349,19 +351,37 @@ def add_ip(request):
     if form.is_valid():
       ranges = Range.objects.all()
       rangeRecord = 0
-      for range in ranges:
-        r1 = IPRange(range.start, range.end)
-        addrs = list(r1)
-        if IPAddress(form.cleaned_data['ip']) in addrs:
-          rangeRecord = range
-          break
-      ip = Ip(
-        ip=form.cleaned_data['ip'],
-        mac=form.cleaned_data['mac'],
-        range_id=rangeRecord,
-        comment=form.cleaned_data['comment'] 
-      )
-      ip.save()
+      ip = form.cleaned_data['ip']
+      if ip[-2] == '/' or ip[-3] == '/':
+        for range in ranges:
+          r1 = IPNetwork(range.cidr)
+          addrs = list(r1)
+          if IPNetwork(ip).ip in addrs:
+            rangeRecord = range
+            break
+        ips = list(ip)
+        for i in IPNetwork(ip):
+          ip = Ip(
+            ip = i,
+            mac = form.cleaned_data['mac'],
+            range_id=rangeRecord,
+            comment = form.cleaned_data['comment']
+          )
+          ip.save()  
+      else:
+        for range in ranges:
+          r1 = IPNetwork(range.cidr)
+          addrs = list(r1)
+          if IPAddress(form.cleaned_data['ip']) in addrs:
+            rangeRecord = range
+            break
+        ip = Ip(
+          ip=form.cleaned_data['ip'],
+          mac=form.cleaned_data['mac'],
+          range_id=rangeRecord,
+          comment=form.cleaned_data['comment'] 
+        )
+        ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
     form = IpForm()
@@ -491,7 +511,7 @@ def search_ip(request):
       ranges = Range.objects.all()
       range = 0
       for r in ranges:
-        range = IPRange(r.start, r.end)
+        range = IPNetwork(r.cidr)
         addrs = list(range)
         if IPAddress(term) in addrs:
           break
