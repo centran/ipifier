@@ -15,7 +15,7 @@ DATABASES = {
         'NAME': 'ipifier',                      # Or path to database file if using sqlite3.
         'USER': 'ipifier',                      # Not used with sqlite3.
         'PASSWORD': 'PQPztNhyl-SJ',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': 'host1.ch1',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -68,6 +68,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/var/www/ipifier/static',
+    '/home/vince/Documents/git/ipifier/static',
 )
 
 # List of finder classes that know how to find static files in
@@ -102,7 +103,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_sorting.middleware.SortingMiddleware',
 )
 
 ROOT_URLCONF = 'ipifier.urls'
@@ -115,6 +115,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/var/www/ipifier/templates',
+    '/home/vince/Documents/git/ipifier/templates',
 )
 
 INSTALLED_APPS = (
@@ -130,7 +131,6 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'auth',
     'iptracker',
-    'django_sorting',
 )
 
 # A sample logging configuration. The only tangible logging
