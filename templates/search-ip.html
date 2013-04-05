@@ -19,7 +19,7 @@
 <br />
 The next free IPs are...<br/><br/>
 {% for ip in ip_list %}
-{{ ip }} &nbsp; <a href="{% url add-entry-ip ip %}">Add as a record entry(fqdn)</a> &nbsp;|&nbsp; <a href="">Add as a lone IP(dhcp)</a>
+{{ ip }} &nbsp; <a href="{% url add-entry-ip ip %}">Add as a record entry(fqdn)</a> &nbsp;|&nbsp; <a href="{% url add-ip-ip ip %}">Add as a lone IP(dhcp)</a>
 <br />
 {% endfor %}
 

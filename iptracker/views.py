@@ -307,7 +307,7 @@ def add_entry(request):
       ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
-    form =RecordForm(initial={'ttl': 3600,'pri': 10})
+    form = RecordForm(initial={'ttl': 3600,'pri': 10})
 
   return render_to_response('add-entry.html', {'form': form}, RequestContext(request))
 
@@ -385,6 +385,49 @@ def add_ip(request):
       return HttpResponseRedirect('/add/saved')
   else:
     form = IpForm()
+  return render_to_response('add-ip.html', {'form': form}, RequestContext(request))
+
+@login_required()
+def add_ip_ip(request, ip):
+  if request.method == 'POST':
+    form = IpForm(request.POST)
+    if form.is_valid():
+      ranges = Range.objects.all()
+      rangeRecord = 0
+      ip = form.cleaned_data['ip']
+      if ip[-2] == '/' or ip[-3] == '/':
+        for range in ranges:
+          r1 = IPNetwork(range.cidr)
+          addrs = list(r1)
+          if IPNetwork(ip).ip in addrs:
+            rangeRecord = range
+            break
+        ips = list(ip)
+        for i in IPNetwork(ip):
+          ip = Ip(
+            ip = i,
+            mac = form.cleaned_data['mac'],
+            range_id=rangeRecord,
+            comment = form.cleaned_data['comment']
+          )
+          ip.save()  
+      else:
+        for range in ranges:
+          r1 = IPNetwork(range.cidr)
+          addrs = list(r1)
+          if IPAddress(form.cleaned_data['ip']) in addrs:
+            rangeRecord = range
+            break
+        ip = Ip(
+          ip=form.cleaned_data['ip'],
+          mac=form.cleaned_data['mac'],
+          range_id=rangeRecord,
+          comment=form.cleaned_data['comment'] 
+        )
+        ip.save()
+      return HttpResponseRedirect('/add/saved')
+  else:
+    form = IpForm(initial={'ip': ip})
   return render_to_response('add-ip.html', {'form': form}, RequestContext(request))
 
 @login_required()
@@ -489,7 +532,7 @@ def search_global(request):
       term = form.cleaned_data['term']
       entries = Record.objects.all().filter( Q(name__contains=term) | Q(content__contains=term) | Q(comment__contains=term) )
       domains = Domain.objects.all().filter( Q(name__contains=term) | Q(comment__contains=term) )
-      ranges = Range.objects.all().filter( Q(name__contains=term) | Q(comment__contains=term) | Q(start__contains=term) | Q(end__contains=term) )
+      ranges = Range.objects.all().filter( Q(name__contains=term) | Q(comment__contains=term) | Q(cidr__contains=term) )
       ips = Ip.objects.all().filter( Q(ip__contains=term) | Q(mac__contains=term) | Q(comment__contains=term) )
       return render_to_response('search-global.html', {
         'form': form, 
