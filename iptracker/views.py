@@ -101,7 +101,7 @@ def edit_record(request, record_id=0):
         content=form.cleaned_data['content'],
         ttl=form.cleaned_data['ttl'],
         domain_id = org_record.domain_id,
-	pri = org_record.pri,
+        pri = org_record.pri,
         comment=form.cleaned_data['comment']
       )
       record.save()
@@ -268,7 +268,7 @@ def add_iprange(request):
     if form.is_valid():
       range = Range(
         name=form.cleaned_data['name'],
-	cidr=form.cleaned_data['cidr'],
+        cidr=form.cleaned_data['cidr'],
         comment=form.cleaned_data['comment']
       )
       range.save()
@@ -296,7 +296,7 @@ def add_entry(request):
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
-	content=content,
+        content=content,
         ttl=form.cleaned_data['ttl'],
         domain_id=domain,
         pri=form.cleaned_data['pri'],
@@ -329,7 +329,7 @@ def add_entry_ip(request, ip):
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
-	content=content,
+        content=content,
         ttl=form.cleaned_data['ttl'],
         domain_id=domain,
         pri=form.cleaned_data['pri'],
