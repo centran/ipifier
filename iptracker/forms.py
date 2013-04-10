@@ -163,20 +163,6 @@ class RangeForm(forms.Form):
     except AddrFormatError:
       self.errors['cidr'] = self.error_class(['Not a valid cidr notation'])
       del cleaned_data['cidr']
-    ranges = Range.objects.all()
-    found = False
-    for range in ranges:
-      if found:
-        break
-      for ip in list(IPNetwork(cidr)):
-        if found:
-           break
-        for i in list(IPNetwork(range.cidr)):
-          if ip == i:
-            found = True
-            self.errors['cidr'] = self.error_class(['Overlapping range'])
-            del cleaned_data['cidr']
-            break
     return cleaned_data
 
 class EditRangeForm(forms.Form):
