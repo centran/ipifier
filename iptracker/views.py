@@ -38,9 +38,21 @@ def list_iprange(request):
 
 @login_required()
 def list_iprange_entries(request, range_id=1):
-  entries = Record.objects.select_related().filter(ip__range_id=range_id).order_by('name')
-  ips = Ip.objects.select_related().filter(range_id=range_id).order_by('ip')
-  return render_to_response('list-iprange-entries.html', {'entries': entries,'ips': ips})
+  entries = Record.objects.all()
+  ips = Ip.objects.all()
+  range = Range.objects.get(id=range_id)
+  r = IPNetwork(range.cidr)
+  addrs = list(r)
+  ip_list = []
+  for ip in ips:
+    if IPAddress(ip.ip) in addrs:
+      ip_list.append(ip)
+  entry_list = []
+  for entry in entries:
+    if entry.type == 'A' or entry.type == 'AAAA':
+      if IPAddress(entry.content) in addrs:
+        entry_list.append(entry)
+  return render_to_response('list-iprange-entries.html', {'entries': entry_list,'ips': ip_list})
 
 @login_required()
 def list_entries(request):
