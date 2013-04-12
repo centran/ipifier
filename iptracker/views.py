@@ -297,14 +297,6 @@ def add_entry(request):
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       content=form.cleaned_data['content']
-      ranges = Range.objects.all()
-      rangeRecord = 0
-      for range in ranges:
-        r1 = IPNetwork(range.cidr)
-        addrs = list(r1)
-        if IPAddress(content) in addrs:
-          rangeRecord = range
-          break
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
@@ -315,7 +307,7 @@ def add_entry(request):
         comment=form.cleaned_data['comment'],
       )
       record.save()
-      ip = Ip(ip=content,record_id=record,range_id=rangeRecord,mac=form.cleaned_data['mac'])
+      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'])
       ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
@@ -330,14 +322,6 @@ def add_entry_ip(request, ip):
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       content=form.cleaned_data['content']
-      ranges = Range.objects.all()
-      rangeRecord = 0
-      for range in ranges:
-        r1 = IPNetowrk(range.cidr)
-        addrs = list(r1)
-        if IPAddress(content) in addrs:
-          rangeRecord = range
-          break
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
@@ -348,7 +332,7 @@ def add_entry_ip(request, ip):
         comment=form.cleaned_data['comment'],
       )
       record.save()
-      ip = Ip(ip=content,record_id=record,range_id=rangeRecord,mac=form.cleaned_data['mac'])
+      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'])
       ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
@@ -361,39 +345,12 @@ def add_ip(request):
   if request.method == 'POST':
     form = IpForm(request.POST)
     if form.is_valid():
-      ranges = Range.objects.all()
-      rangeRecord = 0
-      ip = form.cleaned_data['ip']
-      if ip[-2] == '/' or ip[-3] == '/':
-        for range in ranges:
-          r1 = IPNetwork(range.cidr)
-          addrs = list(r1)
-          if IPNetwork(ip).ip in addrs:
-            rangeRecord = range
-            break
-        ips = list(ip)
-        for i in IPNetwork(ip):
-          ip = Ip(
-            ip = i,
-            mac = form.cleaned_data['mac'],
-            range_id=rangeRecord,
-            comment = form.cleaned_data['comment']
-          )
-          ip.save()  
-      else:
-        for range in ranges:
-          r1 = IPNetwork(range.cidr)
-          addrs = list(r1)
-          if IPAddress(form.cleaned_data['ip']) in addrs:
-            rangeRecord = range
-            break
-        ip = Ip(
-          ip=form.cleaned_data['ip'],
-          mac=form.cleaned_data['mac'],
-          range_id=rangeRecord,
-          comment=form.cleaned_data['comment'] 
-        )
-        ip.save()
+      ip = Ip(
+        ip=form.cleaned_data['ip'],
+        mac=form.cleaned_data['mac'],
+        comment=form.cleaned_data['comment'] 
+      )
+      ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
     form = IpForm()
@@ -402,42 +359,13 @@ def add_ip(request):
 @login_required()
 def add_ip_ip(request, ip):
   if request.method == 'POST':
-    form = IpForm(request.POST)
-    if form.is_valid():
-      ranges = Range.objects.all()
-      rangeRecord = 0
-      ip = form.cleaned_data['ip']
-      if ip[-2] == '/' or ip[-3] == '/':
-        for range in ranges:
-          r1 = IPNetwork(range.cidr)
-          addrs = list(r1)
-          if IPNetwork(ip).ip in addrs:
-            rangeRecord = range
-            break
-        ips = list(ip)
-        for i in IPNetwork(ip):
-          ip = Ip(
-            ip = i,
-            mac = form.cleaned_data['mac'],
-            range_id=rangeRecord,
-            comment = form.cleaned_data['comment']
-          )
-          ip.save()  
-      else:
-        for range in ranges:
-          r1 = IPNetwork(range.cidr)
-          addrs = list(r1)
-          if IPAddress(form.cleaned_data['ip']) in addrs:
-            rangeRecord = range
-            break
-        ip = Ip(
-          ip=form.cleaned_data['ip'],
-          mac=form.cleaned_data['mac'],
-          range_id=rangeRecord,
-          comment=form.cleaned_data['comment'] 
-        )
-        ip.save()
-      return HttpResponseRedirect('/add/saved')
+    ip = Ip(
+      ip=form.cleaned_data['ip'],
+      mac=form.cleaned_data['mac'],
+      comment=form.cleaned_data['comment'] 
+    )
+    ip.save()
+    return HttpResponseRedirect('/add/saved')
   else:
     form = IpForm(initial={'ip': ip})
   return render_to_response('add-ip.html', {'form': form}, RequestContext(request))

@@ -16,7 +16,6 @@
 
 {% block content %}
 <h1><a href="{% url del %}">Delete</a> -> <a href="">Domain</a></h1>
-<p>WARNING! Deleting this range will delete ALL RECORDS and IPS associated with the range.</p>
 Really delete? <a href="{% url del-del-iprange range.id %}">Yes</a> <a href="{% url list %}">No</a>
 <table id="tfhover">
 	<tr>   
