@@ -503,8 +503,10 @@ def del_iprange(request, range_id=0):
 
 @login_required()
 def del_del_record(request, record_id=1):
-  ip = Ip.objects.get(record_id=record_id)
-  ip.delete()
+  entry = Record.objects.get(id=record_id)  
+  if entry.type == 'A' or entry.type == 'AAAA':
+    ip = Ip.objects.get(record_id=record_id)
+    ip.delete()
   entry = Record.objects.get(id=record_id)
   entry.delete()
   return render_to_response('del-deleted.html')
