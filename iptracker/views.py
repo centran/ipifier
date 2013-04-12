@@ -527,12 +527,6 @@ def del_del_ip(request, ip_id):
 @login_required()
 def del_del_iprange(request, range_id=0):
   range = Range.objects.get(id=range_id)
-  ips = Ip.objects.all().filter(range_id=range_id)
-  for ip in ips:
-    if ip.record_id:
-      record = Record.objects.get(id=ip.record_id.id)
-      record.delete()
-    ip.delete()
   range.delete()
   return render_to_response('del-deleted.html')
 
