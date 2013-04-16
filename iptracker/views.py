@@ -345,12 +345,22 @@ def add_ip(request):
   if request.method == 'POST':
     form = IpForm(request.POST)
     if form.is_valid():
-      ip = Ip(
-        ip=form.cleaned_data['ip'],
-        mac=form.cleaned_data['mac'],
-        comment=form.cleaned_data['comment'] 
-      )
-      ip.save()
+      addr = form.cleaned_data['ip']
+      if len(addr) > 3 and (addr[-2] == '/' or addr[-3] == '/'):
+        ip_list = list(IPNetwork(addr))
+        for i in ip_list:
+          if i == addr:
+            ip = Ip(ip=i,mac=form.cleaned_data['mac'],comment=form.cleaned_data['comment'])
+          else:
+            ip = Ip(ip=i,mac='',comment=form.cleaned_data['comment'])
+          ip.save()
+      else:
+        ip = Ip(
+          ip=form.cleaned_data['ip'],
+          mac=form.cleaned_data['mac'],
+          comment=form.cleaned_data['comment'] 
+        )
+        ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
     form = IpForm()
