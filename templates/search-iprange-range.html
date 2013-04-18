@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+
+{% block content %}
+<h1><a href="{% url search %}">Search</a> -> <a href="">IP</a> </h1>
+
+<br />
+The next free IPs are...<br/><br/>
+{% for ip in ip_list %}
+{{ ip }} &nbsp; <a href="{% url add-entry-ip ip %}">Add as a record entry(fqdn)</a> &nbsp;|&nbsp; <a href="{% url add-ip-ip ip %}">Add as a lone IP(dhcp)</a>
+<br />
+{% endfor %}
+
+{% endblock content %}

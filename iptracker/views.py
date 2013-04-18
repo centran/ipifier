@@ -520,3 +520,21 @@ def search_ip(request):
   else:
     form = IpSearchForm()
   return render_to_response('search-ip.html', {'form': form}, RequestContext(request))
+
+@login_required()
+def search_iprange(request):
+  ranges = Range.objects.all()
+  return render_to_response('search-iprange.html', {'ranges': ranges}, RequestContext(request))
+
+def search_iprange_range(request, range=0):
+  ip_list = []
+  ips = Ip.objects.all()
+  range = Range.objects.get(id=range)
+  r = IPRange(IPNetwork(range.cidr).network,IPNetwork(range.cidr).broadcast)
+  for ip in r:
+    ip_list.append(str(ip))
+    for i in ips:
+      if IPAddress(i.ip) == ip:
+        ip_list.pop()
+        break
+  return render_to_response('search-iprange-range.html', {'ip_list': ip_list[0:5]})

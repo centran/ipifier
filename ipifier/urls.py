@@ -52,4 +52,6 @@ urlpatterns = patterns('',
     url(r'^add/error/mac/exists$', 'iptracker.views.add_error_mac_exists', name='add-error-mac-exists'),
     url(r'^search/global/$', 'iptracker.views.search_global', name='search-global'),
     url(r'^search/ip/$', 'iptracker.views.search_ip', name='search-ip'),
+    url(r'^search/iprange/$', 'iptracker.views.search_iprange', name='search-iprange'),
+    url(r'^search/iprange/(?P<range>[\w\n]+)/$', 'iptracker.views.search_iprange_range', name='search-iprange-range'),
 )

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Ipifier {% endblock %}
+
+{% block content %}
+<h1><a href="{% url search %}">Search</a> -> <a href="">IP RANGE</a> </h1>
+
+<div>
+
+<br />
+<h1>IP RANGES</h1>
+{% if ranges %}
+
+        <table id="tfhover">
+                <thead>
+                <tr>   
+                        <th>NAME</th>
+                        <th>CIDR</th>
+                        <th>COMMENT</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for range in ranges %}
+                <tr>   
+                        <td><a href="{% url search-iprange-range range.id %}">{{ range.name }}</a></td>
+                        <td>{{ range.cidr }}</td>
+                        <td>{{ range.comment }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+        </table>
+
+{% else %}
+        No ranges found
+{% endif %}
+
+{% endblock content %}
