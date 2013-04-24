@@ -32,9 +32,29 @@ $(function() {
     <div id="nav">
         <ul>
 	    <li><a href="{% url 'iptracker.views.default' %}">home</a></li>
-            <li><a href="{% url 'iptracker.views.search' %}">search</a></li>
-            <li><a href="{% url 'iptracker.views.list_default' %}">list</a></li>
-            <li><a href="{% url 'iptracker.views.add' %}">add</a></li>
+            <li><a href="{% url 'iptracker.views.search' %}">search</a>
+              <ul>
+                <li><a href="{% url 'search-global' %}">global</a></li>
+                <li><a href="{% url 'search-iprange' %}">free ip by range</a></li>
+                <li><a href="{% url 'search-ip' %}">free ip</a></li>
+              </ul>
+            </li>
+            <li><a href="{% url 'iptracker.views.list_default' %}">list</a>
+              <ul>
+                <li><a href="{% url 'list-domains' %}">domain zone</a></li>
+                <li><a href="{% url 'list-iprange' %}">ip range</a></li>
+                <li><a href="{% url 'list-entries' %}">fqdn entry</a></li>
+                <li><a href="{% url 'list-ips' %}">ip</a></li>
+              </ul>
+            </li>
+            <li><a href="{% url 'iptracker.views.add' %}">add</a>
+              <ul>
+                <li><a href="{% url 'add-domain' %}">domain</a></li>
+                <li><a href="{% url 'add-iprange' %}">ip range</a></li>
+                <li><a href="{% url 'add-entry' %}">fqdn entry</a></li>
+                <li><a href="{% url 'add-ip' %}">ip</a></li>
+              </ul>
+            </li>
 	    <li><a href="/accounts/logout">Signout</a></li>
         </ul>
     </div>
