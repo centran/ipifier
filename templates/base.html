@@ -7,10 +7,61 @@
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "css/style.css" %}{% endblock %}" />
 <script type="text/javascript" src="/static/jscript/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/static/jscript/jquery.datatables.js"></script>
+<script type="text/javascript" src="/static/jscript/dataTables.ipaddress.js"></script>
+<script type="text/javascript" src="/static/jscript/dataTables.string-ip.js"></script>
 <script type="text/javascript" charset="utf-8">
 $(function() {
-      $('table').dataTable( {
-   });
+    $('#list-iprange').dataTable({
+            "aoColumns": [
+                null,
+                { "sType": "string-ip" },
+                null,
+                null
+            ]
+    });
+    $('#search-iprange').dataTable({
+            "aoColumns": [
+                null,
+                { "sType": "string-ip" },
+                null,
+            ]
+    });
+    $('#ips').dataTable({
+        "aoColumns": [
+                { "sType": "string-ip" },
+                null,
+                null,
+                null
+        ]
+    });
+    $('#domains').dataTable({
+    });
+    $('#records').dataTable({
+        "aoColumns": [
+                null,
+                null,
+                null,
+                { "sType": "ip-address" },
+                null,
+                null,
+                null,
+                null
+        ]
+    });
+    $('#domain-entries').dataTable({
+        "aoColumns": [
+                null,
+                null,
+                { "sType": "ip-address" },
+                null,
+                null,
+                null,
+                null
+        ]
+    });
+    $('#tfhover').dataTable({
+    });
+  
 });
 </script>
 {% block extrastyle %}{% endblock %}
