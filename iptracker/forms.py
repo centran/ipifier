@@ -153,7 +153,7 @@ class RangeForm(forms.Form):
     cidr = cleaned_data.get('cidr')
     names = Range.objects.all()
     for n in names:
-      if n == name:
+      if n.name == name:
         self.errors['name'] = self.error_class(['Range name already exists'])
         del cleaned_data['name']
     if cidr == None:
