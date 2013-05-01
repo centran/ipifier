@@ -12,6 +12,7 @@
 <script type="text/javascript" charset="utf-8">
 $(function() {
     $('#list-iprange').dataTable({
+            "iDisplayLength": 50,
             "aoColumns": [
                 null,
                 { "sType": "string-ip" },
@@ -20,6 +21,7 @@ $(function() {
             ]
     });
     $('#search-iprange').dataTable({
+            "iDisplayLength": 50,            
             "aoColumns": [
                 null,
                 { "sType": "string-ip" },
@@ -27,6 +29,7 @@ $(function() {
             ]
     });
     $('#ips').dataTable({
+        "iDisplayLength": 50,        
         "aoColumns": [
                 { "sType": "string-ip" },
                 null,
@@ -35,8 +38,10 @@ $(function() {
         ]
     });
     $('#domains').dataTable({
+        "iDisplayLength": 50
     });
     $('#records').dataTable({
+        "iDisplayLength": 50,
         "aoColumns": [
                 null,
                 null,
@@ -49,6 +54,7 @@ $(function() {
         ]
     });
     $('#domain-entries').dataTable({
+        "iDisplayLength": 50,
         "aoColumns": [
                 null,
                 null,
@@ -60,6 +66,7 @@ $(function() {
         ]
     });
     $('#tfhover').dataTable({
+        "iDisplayLength": 50
     });
   
 });
