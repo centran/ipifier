@@ -199,7 +199,6 @@ def edit_ip(request, ip_id=0):
       ip = Ip(
         id=org_ip.id,
         ip=form.cleaned_data['ip'],
-        range_id=rangeRecord,
         mac=form.cleaned_data['mac'],
         comment=form.cleaned_data['comment']
       )

@@ -126,13 +126,14 @@ class EditRecordForm(forms.Form):
         if IPAddress(content) in addrs:
           found = True
           break
-    if not re.match("[0-9a-f]{2}([\.\-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()):
-      self.errors['mac'] = self.error_class(['Not a MAC address'])
-      del cleaned_data['mac']
-    m = re.sub("[.:-]", "", mac)
-    m = m.lower()
-    mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
-    cleaned_data['mac'] = mac
+    if mac:
+      if not re.match("[0-9a-f]{2}([\.\-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()):
+        self.errors['mac'] = self.error_class(['Not a MAC address'])
+        del cleaned_data['mac']
+      m = re.sub("[.:-]", "", mac)
+      m = m.lower()
+      mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
+      cleaned_data['mac'] = mac
     if not found and ip_valid:
       self.errors['content'] = self.error_class(['IP is not within a known range'])
       ip_valid = False
@@ -290,12 +291,13 @@ class EditIpForm(forms.Form):
       self.errors['ip'] = self.error_class(['IP is not within a known range'])
       del cleaned_data['ip']
       ip_valid = False
-    if not re.match("[0-9a-f]{2}([\.\-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()):
-      self.errors['mac'] = self.error_class(['Not a MAC address'])
-    m = re.sub("[.:-]", "", mac)
-    m = m.lower()
-    mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
-    cleaned_data['mac'] = mac
+    if mac:
+      if not re.match("[0-9a-f]{2}([\.\-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", mac.lower()):
+        self.errors['mac'] = self.error_class(['Not a MAC address'])
+      m = re.sub("[.:-]", "", mac)
+      m = m.lower()
+      mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
+      cleaned_data['mac'] = mac
     return cleaned_data
 
 class SearchForm(forms.Form):
