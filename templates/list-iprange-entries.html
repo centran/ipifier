@@ -33,7 +33,10 @@
 		{% endfor %}
 		</tbody>
 	</table>
-
+{% else %}
+	No entries for this record <br/><Br />
+{% endif %}
+{% if ips %}
 	<div style="clear:both;"></div>
 	<h1>IPS</h1>
 	<table id="ips">
@@ -58,7 +61,7 @@
 	</table>
 
 {% else %}
-	No entries for this domain
+	No IPs for this record
 {% endif %}
 
 {% endblock content %}
