@@ -492,29 +492,29 @@ def search_global(request):
 
 @login_required()
 def search_ip(request):
-  if request.method== 'POST':
+  if request.method == 'POST':
     form = IpSearchForm(request.POST)
     if form.is_valid():
-      term = form.cleaned_data['term']
-      ranges = Range.objects.all()
-      range = 0
-      for r in ranges:
-        range = IPNetwork(r.cidr)
-        addrs = list(range)
-        if IPAddress(term) in addrs:
-          break
-      range = IPRange(term, range[-1])
+      term = form.cleaned_data['term']      
+      term = IPAddress(term)
       ips = Ip.objects.all()
+      i = 0
       ip_list = []
-      for ip in range:
-        ip_list.append(str(ip))
-        for i in ips:
-          if IPAddress(i.ip) == ip:
-            ip_list.pop()
+      while i < 5:
+        found = False
+        for ip in ips:
+          if term == IPAddress(ip.ip):
+            found = True
             break
+        if found:
+          term = term + 1
+        else:
+          ip_list.append(str(term))
+          term = term + 1
+          i = i + 1
       return render_to_response('search-ip.html', {
         'form': form,
-        'ip_list': ip_list[0:5]
+        'ip_list': ip_list
       }, RequestContext(request))
   else:
     form = IpSearchForm()
@@ -525,6 +525,7 @@ def search_iprange(request):
   ranges = Range.objects.all()
   return render_to_response('search-iprange.html', {'ranges': ranges}, RequestContext(request))
 
+@login_required()
 def search_iprange_range(request, range=0):
   ip_list = []
   ips = Ip.objects.all()
