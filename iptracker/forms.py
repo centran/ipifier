@@ -157,6 +157,9 @@ class RangeForm(forms.Form):
       if n.name == name:
         self.errors['name'] = self.error_class(['Range name already exists'])
         del cleaned_data['name']
+      if n.cidr == cidr:
+        self.errors['cidr'] = self.error_class(['CIDR already exists'])
+        del cleaned_data['cidr']
     if cidr == None:
       cidr = '1'
     try:
