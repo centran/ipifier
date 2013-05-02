@@ -77,6 +77,7 @@ def edit_record(request, record_id=0):
     form = EditRecordForm(request.POST)
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
+      comment = form.cleaned_data['comment']
       records = Record.objects.all()
       if form.cleaned_data['name'] != org_record.name:
         for record in records:
@@ -117,10 +118,12 @@ def edit_record(request, record_id=0):
         comment=form.cleaned_data['comment']
       )
       record.save()
+      if comment is None or comment == '':
+        comment = form.cleaned_data['name']
       if ip_changed or mac_changed:
         ip = Ip.objects.get(record_id=record)
         ip.delete()
-        ip = Ip(ip=content,record_id=record,range_id=rangeRecord,mac=form.cleaned_data['mac'])
+        ip = Ip(ip=content,record_id=record,range_id=rangeRecord,mac=form.cleaned_data['mac'],comment=comment)
         ip.save()
       return HttpResponseRedirect('/edit/record/saved')
   else:
@@ -297,6 +300,7 @@ def add_entry(request):
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       content=form.cleaned_data['content']
       mac=form.cleaned_data['mac']
+      comment = form.cleaned_data['comment']
       ips = Ip.objects.all()
       warning = ''
       warn = False
@@ -320,10 +324,12 @@ def add_entry(request):
         ttl=form.cleaned_data['ttl'],
         domain_id=domain,
         pri=form.cleaned_data['pri'],
-        comment=form.cleaned_data['comment'],
+        comment=comment,
       )
       record.save()
-      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'])
+      if comment is None or comment == '':
+        comment = form.cleaned_data['name']
+      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'],comment=comment)
       ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
@@ -338,6 +344,7 @@ def add_entry_warn(request):
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       content=form.cleaned_data['content']
+      comment=form.cleaned_data['comment']
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
@@ -348,7 +355,9 @@ def add_entry_warn(request):
         comment=form.cleaned_data['comment'],
       )
       record.save()
-      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'])
+      if comment is None or comment == '':
+        comment = form.cleaned_data['name']
+      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'],comment=comment)
       ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
@@ -371,6 +380,7 @@ def add_entry_ip(request, ip):
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       content=form.cleaned_data['content']
+      comment=form.cleaned_data['comment']
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
@@ -381,7 +391,9 @@ def add_entry_ip(request, ip):
         comment=form.cleaned_data['comment'],
       )
       record.save()
-      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'])
+      if comment is None or comment == '':
+        comment = form.cleaned_data['name']
+      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'],comment=comment)
       ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
