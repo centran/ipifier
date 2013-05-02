@@ -296,6 +296,23 @@ def add_entry(request):
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       content=form.cleaned_data['content']
+      mac=form.cleaned_data['mac']
+      ips = Ip.objects.all()
+      warning = ''
+      warn = False
+      for ip in ips:
+        if content == ip.ip:
+          warn = True
+          warning = warning + 'IP already exists. '
+        if mac == ip.mac and mac:
+          warn = True
+          warning = warning + 'MAC already exists. '
+        if warn:
+          break
+      if warn:
+        request.session['_old_post'] = form.cleaned_data
+        request.session['warning'] = warning
+        return HttpResponseRedirect('/add/entry/warn')
       record = Record(
         name=form.cleaned_data['name'],
         type=form.cleaned_data['type'],
@@ -313,6 +330,39 @@ def add_entry(request):
     form = RecordForm(initial={'ttl': 3600,'pri': 10})
 
   return render_to_response('add-entry.html', {'form': form}, RequestContext(request))
+
+@login_required()
+def add_entry_warn(request):
+  if request.method == 'POST':
+    form = RecordForm(request.POST)
+    if form.is_valid():
+      domain = Domain.objects.get(id=form.cleaned_data['domain'])
+      content=form.cleaned_data['content']
+      record = Record(
+        name=form.cleaned_data['name'],
+        type=form.cleaned_data['type'],
+        content=content,
+        ttl=form.cleaned_data['ttl'],
+        domain_id=domain,
+        pri=form.cleaned_data['pri'],
+        comment=form.cleaned_data['comment'],
+      )
+      record.save()
+      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'])
+      ip.save()
+      return HttpResponseRedirect('/add/saved')
+  else:
+    old_post = request.session.get('_old_post')
+    form = RecordForm(initial={
+      'name': old_post['name'],
+      'type': old_post['type'],
+      'content': old_post['content'],
+      'ttl': old_post['ttl'],
+      'domain_id': old_post['domain'],
+      'pri': old_post['pri'],
+      'comment': old_post['comment']
+    })
+  return render_to_response('add-entry-warn.html', {'form': form}, RequestContext(request))
 
 @login_required()
 def add_entry_ip(request, ip):

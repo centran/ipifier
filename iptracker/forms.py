@@ -69,13 +69,6 @@ class RecordForm(forms.Form):
       m = m.lower()
       mac = "%s-%s-%s-%s-%s-%s" % (m[0:2], m[2:4], m[4:6], m[6:8], m[8:10], m[10:])
       cleaned_data['mac'] = mac
-    ips = Ip.objects.all()
-    for ip in ips:
-      if content == ip.ip and ip_valid:
-        self.errors['content'] = self.error_class(['IP already exists'])
-        ip_valid = False
-      if mac == ip.mac and mac:
-        self.errors['mac'] = self.error_class(['MAC already exists'])  
     return cleaned_data
 
 class EditRecordForm(forms.Form):
