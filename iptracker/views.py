@@ -537,10 +537,10 @@ def search_global(request):
     form = SearchForm(request.POST)
     if form.is_valid():
       term = form.cleaned_data['term']
-      entries = Record.objects.all().filter( Q(name__contains=term) | Q(content__contains=term) | Q(comment__contains=term) )
-      domains = Domain.objects.all().filter( Q(name__contains=term) | Q(comment__contains=term) )
-      ranges = Range.objects.all().filter( Q(name__contains=term) | Q(comment__contains=term) | Q(cidr__contains=term) )
-      ips = Ip.objects.all().filter( Q(ip__contains=term) | Q(mac__contains=term) | Q(comment__contains=term) )
+      entries = Record.objects.all().filter( Q(name__icontains=term) | Q(content__icontains=term) | Q(comment__icontains=term) )
+      domains = Domain.objects.all().filter( Q(name__icontains=term) | Q(comment__icontains=term) )
+      ranges = Range.objects.all().filter( Q(name__icontains=term) | Q(comment__icontains=term) | Q(cidr__icontains=term) )
+      ips = Ip.objects.all().filter( Q(ip__icontains=term) | Q(mac__icontains=term) | Q(comment__icontains=term) )
       return render_to_response('search-global.html', {
         'form': form, 
         'entries': entries,
