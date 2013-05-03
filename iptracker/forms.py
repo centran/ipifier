@@ -147,7 +147,7 @@ class RangeForm(forms.Form):
     cidr = cleaned_data.get('cidr')
     names = Range.objects.all()
     for n in names:
-      if n.name == name:
+      if n.name.lower() == name.lower():
         self.errors['name'] = self.error_class(['Range name already exists'])
         del cleaned_data['name']
       if n.cidr == cidr:
@@ -184,7 +184,7 @@ class IpForm(forms.Form):
     if ip == None:
       ip = '1'
     ip_valid = True
-    if len(ip)>3 and (ip[-2] == '/' or ip[-3] == '/'):
+    if len(ip)>3 and (ip[-2] == '/' or ip[-3] == '/' or ip[-4] == '/'):
       try:
         network = IPNetwork(ip)
       except AddrFormatError:
@@ -206,7 +206,7 @@ class IpForm(forms.Form):
       for range in ranges:
         r = IPNetwork(range.cidr)
         addrs = list(r)
-        if len(ip)>3 and (ip[-2] == '/' or ip[-3] == '/'):
+        if len(ip)>3 and (ip[-2] == '/' or ip[-3] == '/' or ip[-4] == '/'):
           for i in IPNetwork(ip):
             if i in addrs:
               found = True
