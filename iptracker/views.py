@@ -301,6 +301,7 @@ def add_entry(request):
       content=form.cleaned_data['content']
       mac=form.cleaned_data['mac']
       comment = form.cleaned_data['comment']
+      name = form.cleaned_data['name']
       ips = Ip.objects.all()
       warning = ''
       warn = False
@@ -317,8 +318,10 @@ def add_entry(request):
         request.session['_old_post'] = form.cleaned_data
         request.session['warning'] = warning
         return HttpResponseRedirect('/add/entry/warn')
+      if name[-1] == '.':
+        name = name[0:-1]
       record = Record(
-        name=form.cleaned_data['name'],
+        name=name,
         type=form.cleaned_data['type'],
         content=content,
         ttl=form.cleaned_data['ttl'],
@@ -345,8 +348,11 @@ def add_entry_warn(request):
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       content=form.cleaned_data['content']
       comment=form.cleaned_data['comment']
+      name = form.cleaned_data['name']
+      if name[-1] == '.':
+        name = name[0:-1]
       record = Record(
-        name=form.cleaned_data['name'],
+        name=name,
         type=form.cleaned_data['type'],
         content=content,
         ttl=form.cleaned_data['ttl'],
