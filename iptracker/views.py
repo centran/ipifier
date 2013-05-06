@@ -81,12 +81,6 @@ def edit_record(request, record_id=0):
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       comment = form.cleaned_data['comment']
       type = form.cleaned_data['type']
-      records = Record.objects.all()
-      if form.cleaned_data['name'] != org_record.name:
-        for record in records:
-          if form.cleaned_data['name'] == record.name:
-            if record.domain_id == domain:
-              return HttpResponseRedirect('/add/error/name')
       content = form.cleaned_data['content']
       ranges = Range.objects.all()
       rangeRecord = 0
