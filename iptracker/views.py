@@ -309,6 +309,7 @@ def add_entry(request):
       mac=form.cleaned_data['mac']
       comment = form.cleaned_data['comment']
       name = form.cleaned_data['name']
+      type = form.cleaned_data['type']
       ips = Ip.objects.all()
       warning = ''
       warn = False
@@ -329,7 +330,7 @@ def add_entry(request):
         name = name[0:-1]
       record = Record(
         name=name,
-        type=form.cleaned_data['type'],
+        type=type,
         content=content,
         ttl=form.cleaned_data['ttl'],
         domain_id=domain,
