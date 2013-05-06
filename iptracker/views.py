@@ -330,10 +330,11 @@ def add_entry(request):
         comment=comment,
       )
       record.save()
-      if comment is None or comment == '':
-        comment = form.cleaned_data['name']
-      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'],comment=comment)
-      ip.save()
+      if type == 'A' or type == 'AAAA':
+        if comment is None or comment == '':
+          comment = form.cleaned_data['name']
+        ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'],comment=comment)
+        ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
     form = RecordForm(initial={'ttl': 3600,'pri': 10})
@@ -348,12 +349,13 @@ def add_entry_warn(request):
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       content=form.cleaned_data['content']
       comment=form.cleaned_data['comment']
+      type = form.cleaned_data['type']
       name = form.cleaned_data['name']
       if name[-1] == '.':
         name = name[0:-1]
       record = Record(
         name=name,
-        type=form.cleaned_data['type'],
+        type=type,
         content=content,
         ttl=form.cleaned_data['ttl'],
         domain_id=domain,
@@ -361,10 +363,11 @@ def add_entry_warn(request):
         comment=form.cleaned_data['comment'],
       )
       record.save()
-      if comment is None or comment == '':
-        comment = form.cleaned_data['name']
-      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'],comment=comment)
-      ip.save()
+      if type == 'A' or type == 'AAAA':
+        if comment is None or comment == '':
+          comment = form.cleaned_data['name']
+        ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'],comment=comment)
+        ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
     old_post = request.session.get('_old_post')
@@ -397,10 +400,11 @@ def add_entry_ip(request, ip):
         comment=form.cleaned_data['comment'],
       )
       record.save()
-      if comment is None or comment == '':
-        comment = form.cleaned_data['name']
-      ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'],comment=comment)
-      ip.save()
+      if type == 'A' or type == 'AAAA':
+        if comment is None or comment == '':
+          comment = form.cleaned_data['name']
+        ip = Ip(ip=content,record_id=record,mac=form.cleaned_data['mac'],comment=comment)
+        ip.save()
       return HttpResponseRedirect('/add/saved')
   else:
     form = RecordForm(initial={'content': ip, 'ttl': 3600,'pri': 10})

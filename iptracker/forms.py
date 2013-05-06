@@ -33,7 +33,10 @@ class RecordForm(forms.Form):
       if name == record.name and domain == record.domain_id:
         self.errors['name'] = self.error_class(['Domain name already exists'])
         del cleaned_data['name']
-    ip_valid = True
+    if type == 'A' or type == 'AAAA':    
+      ip_valid = True
+    else:
+      ip_valid = False
     if type == 'A':
       try: 
         validate_ipv4_address(content)
@@ -94,7 +97,10 @@ class EditRecordForm(forms.Form):
     #So instead of passing None we pass 1 witch is invalid as well
     if content == None:
       content = '1'
-    ip_valid = True
+    if type == 'A' or type == 'AAAA':
+      ip_valid = True
+    else:
+      ip_valid = False
     if type == 'A':
       try: 
         validate_ipv4_address(content)
