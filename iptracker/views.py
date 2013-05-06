@@ -9,7 +9,6 @@ from iptracker.forms import *
 from django.template import RequestContext
 from django.core.validators import validate_ipv46_address, validate_ipv4_address, validate_ipv6_address
 from django.core.exceptions import ValidationError
-from netaddr import *
 import datetime
 from itertools import chain
 from django.db.models import Q
@@ -72,12 +71,16 @@ def list_ips(request):
 @login_required()
 def edit_record(request, record_id=0):
   org_record = Record.objects.get(id=record_id)
-  org_ip = Ip.objects.get(record_id=record_id)
+  try:
+    org_ip = Ip.objects.get(record_id=record_id)
+  except Ip.DoesNotExist:
+    org_ip = 0
   if request.method == 'POST':
     form = EditRecordForm(request.POST)
     if form.is_valid():
       domain = Domain.objects.get(id=form.cleaned_data['domain'])
       comment = form.cleaned_data['comment']
+      type = form.cleaned_data['type']
       records = Record.objects.all()
       if form.cleaned_data['name'] != org_record.name:
         for record in records:
@@ -87,21 +90,22 @@ def edit_record(request, record_id=0):
       content = form.cleaned_data['content']
       ranges = Range.objects.all()
       rangeRecord = 0
-      for range in ranges:
-        r1 = IPNetwork(range.cidr)
-        addrs = list(r1)
-        if IPAddress(content) in addrs:
-          rangeRecord = range
-          break
+      if type == 'A' or type == 'AAAA':
+        for range in ranges:
+          r1 = IPNetwork(range.cidr)
+          addrs = list(r1)
+          if IPAddress(content) in addrs:
+            rangeRecord = range
+            break
       ip_changed = False
-      if content != org_record.content:
+      if content != org_record.content and (type == 'A' or type == 'AAAA'):
         ip_changed = True
         ips = Ip.objects.all()
         for ip in ips:
           if ip.ip == content:
             return HttpResponseRedirect('/add/error/ip/exists')
       mac_changed = False
-      if form.cleaned_data['mac'] != org_ip.mac:
+      if org_ip != 0 and form.cleaned_data['mac'] != org_ip.mac:
         mac_changed = True
         macs = Ip.objects.all()
         for mac in macs:
@@ -127,16 +131,25 @@ def edit_record(request, record_id=0):
         ip.save()
       return HttpResponseRedirect('/edit/record/saved')
   else:
-    form = EditRecordForm(initial={
+    if org_ip == 0:
+      form = EditRecordForm(initial={
       'name': org_record.name,
       'type': org_record.type,
       'content': org_record.content,
       'pri': org_record.pri,
       'ttl': org_record.ttl,
       'comment': org_record.comment,
-      'mac': org_ip.mac
       })
-    
+    else:
+      form = EditRecordForm(initial={
+        'name': org_record.name,
+        'type': org_record.type,
+        'content': org_record.content,
+        'pri': org_record.pri,
+        'ttl': org_record.ttl,
+        'comment': org_record.comment,
+        'mac': org_ip.mac
+        })
   record = Record.objects.get(id=record_id)
   return render_to_response('edit-record.html', {'record': record, 'id': record_id, 'form': form}, RequestContext(request))
 
