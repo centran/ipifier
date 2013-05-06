@@ -28,11 +28,6 @@ class RecordForm(forms.Form):
     #So instead of passing None we pass 1 witch is invalid as well
     if content == None:
       content = '1'
-    records = Record.objects.all()
-    for record in records:
-      if name == record.name and domain == record.domain_id:
-        self.errors['name'] = self.error_class(['Domain name already exists'])
-        del cleaned_data['name']
     if type == 'A' or type == 'AAAA':    
       ip_valid = True
     else:
