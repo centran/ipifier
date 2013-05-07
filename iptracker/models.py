@@ -66,7 +66,7 @@ class Domain(models.Model):
 
 class Range(models.Model):
   name = models.CharField(max_length=255, unique=True)
-  cidr = models.CharField(max_length=18, unique=True)
+  cidr = models.CharField(max_length=255, unique=True)
   comment = models.CharField(max_length=255, blank=True)
 
   def __unicode__(self):
