@@ -201,8 +201,16 @@ class IpForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        if IPAddress(content) >= IPNetwork(range.cidr).network and IPAddress(content) <= IPNetwork(range.cidr).broadcast:
-          found = True
+        r = IPNetwork(range.cidr)
+        addrs = list(r)
+        if len(ip)>3 and (ip[-2] == '/' or ip[-3] == '/' or ip[-4] == '/'):
+          for i in IPNetwork(ip):
+            if i in addrs:
+              found = True
+              break
+        else:
+          if IPAddress(ip) >= IPNetwork(range.cidr).network and IPAddress(ip) <= IPNetwork(range.cidr).broadcast:
+            found = True
           break
     if not found and ip_valid:
       self.errors['ip'] = self.error_class(['IP is not within a known range'])
@@ -267,7 +275,9 @@ class EditIpForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        if IPAddress(content) >= IPNetwork(range.cidr).network and IPAddress(content) <= IPNetwork(range.cidr).broadcast:
+        r = IPNetwork(range.cidr)
+        addrs = list(r)
+        if IPAddress(ip) in addrs:
           found = True
           break
     if not found and ip_valid:
