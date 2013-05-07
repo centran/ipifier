@@ -82,15 +82,6 @@ def edit_record(request, record_id=0):
       comment = form.cleaned_data['comment']
       type = form.cleaned_data['type']
       content = form.cleaned_data['content']
-      ranges = Range.objects.all()
-      rangeRecord = 0
-      if type == 'A' or type == 'AAAA':
-        for range in ranges:
-          r1 = IPNetwork(range.cidr)
-          addrs = list(r1)
-          if IPAddress(content) in addrs:
-            rangeRecord = range
-            break
       record = Record(
         id=record_id,
         name=form.cleaned_data['name'],
