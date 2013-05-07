@@ -82,6 +82,14 @@ def edit_record(request, record_id=0):
       comment = form.cleaned_data['comment']
       type = form.cleaned_data['type']
       content = form.cleaned_data['content']
+      ranges = Range.objects.all()
+      rangeRecord = 0
+      ip_changed = False
+      if content != org_record.content and (type == 'A' or type == 'AAAA'):
+        ip_changed = True
+      mac_changed = False
+      if org_ip != 0 and form.cleaned_data['mac'] != org_ip.mac:
+        mac_changed = True
       record = Record(
         id=record_id,
         name=form.cleaned_data['name'],
