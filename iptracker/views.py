@@ -91,20 +91,6 @@ def edit_record(request, record_id=0):
           if IPAddress(content) in addrs:
             rangeRecord = range
             break
-      ip_changed = False
-      if content != org_record.content and (type == 'A' or type == 'AAAA'):
-        ip_changed = True
-        ips = Ip.objects.all()
-        for ip in ips:
-          if ip.ip == content:
-            return HttpResponseRedirect('/add/error/ip/exists')
-      mac_changed = False
-      if org_ip != 0 and form.cleaned_data['mac'] != org_ip.mac:
-        mac_changed = True
-        macs = Ip.objects.all()
-        for mac in macs:
-          if mac.mac == form.cleaned_data['mac']:
-            return HttpResponseRedirect('/add/error/mac/exists')
       record = Record(
         id=record_id,
         name=form.cleaned_data['name'],
