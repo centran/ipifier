@@ -51,9 +51,7 @@ class RecordForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPNetwork(range.cidr)
-        addrs = list(r)
-        if IPAddress(content) in addrs:
+        if IPAddress(content) >= IPNetwork(range.cidr).network and IPAddress(content) <= IPNetwork(range.cidr).broadcast:
           found = True
           break
     if not found and ip_valid:
@@ -115,9 +113,7 @@ class EditRecordForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPNetwork(range.cidr)
-        addrs = list(r)
-        if IPAddress(content) in addrs:
+        if IPAddress(content) >= IPNetwork(range.cidr).network and IPAddress(content) <= IPNetwork(range.cidr).broadcast:
           found = True
           break
     if mac:
@@ -140,7 +136,7 @@ class DomainForm(forms.Form):
 
 class RangeForm(forms.Form):
   name = forms.CharField(max_length=255)
-  cidr = forms.CharField(max_length=18)
+  cidr = forms.CharField()
   comment = forms.CharField(required=False)
   def clean(self):
     cleaned_data = super(RangeForm, self).clean()
@@ -205,17 +201,9 @@ class IpForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPNetwork(range.cidr)
-        addrs = list(r)
-        if len(ip)>3 and (ip[-2] == '/' or ip[-3] == '/' or ip[-4] == '/'):
-          for i in IPNetwork(ip):
-            if i in addrs:
-              found = True
-              break
-        else:
-          if IPAddress(ip) in addrs:
-            found = True
-            break
+        if IPAddress(content) >= IPNetwork(range.cidr).network and IPAddress(content) <= IPNetwork(range.cidr).broadcast:
+          found = True
+          break
     if not found and ip_valid:
       self.errors['ip'] = self.error_class(['IP is not within a known range'])
       del cleaned_data['ip']
@@ -279,9 +267,7 @@ class EditIpForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPNetwork(range.cidr)
-        addrs = list(r)
-        if IPAddress(ip) in addrs:
+        if IPAddress(content) >= IPNetwork(range.cidr).network and IPAddress(content) <= IPNetwork(range.cidr).broadcast:
           found = True
           break
     if not found and ip_valid:
