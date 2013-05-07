@@ -111,7 +111,7 @@ def edit_record(request, record_id=0):
         type=form.cleaned_data['type'],
         content=form.cleaned_data['content'],
         ttl=form.cleaned_data['ttl'],
-        domain_id = org_record.domain_id,
+        domain_id = domain,
         pri = org_record.pri,
         comment=form.cleaned_data['comment']
       )
@@ -407,7 +407,8 @@ def add_entry_ip(request, ip):
         pri=form.cleaned_data['pri'],
         comment=form.cleaned_data['comment'],
       )
-      record.save()
+      record.save
+      if name[-1] == '.':e()
       if type == 'A' or type == 'AAAA':
         if comment is None or comment == '':
           comment = form.cleaned_data['name']
