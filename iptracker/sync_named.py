@@ -53,7 +53,7 @@ def write_named():
       f.write('\t\tNS\t'+ns.content+'.\n')
     mailexchanges = Record.objects.all().filter( Q(domain_id=domain.id) & Q(type='MX') )
     for mx in mailexchanges:
-      f.write('\t\tMX\t'+mx.content+'.\n')
+      f.write('\t\tMX\t'+str(mx.pri)+' '+mx.content+'.\n')
     records = Record.objects.all().filter( Q(domain_id=domain.id) & Q(type='A') )
     for record in records:
       f.write(record.name)
