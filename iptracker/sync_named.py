@@ -36,9 +36,9 @@ def write_named():
         n = '0' + str(num)
       else:
         n = str(num)
+      if num == 100:
+        n = '00'
     except IOError:
-      n = '00'
-    if num == 100:
       n = '00'
     f = open('/tmp/pri/named.'+domain.name, 'w')
     f.write('')
