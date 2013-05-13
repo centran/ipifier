@@ -77,7 +77,10 @@ def write_named():
       f.write(record.name+'\tIN TXT\t'+'"'+record.content+'"\n')
     records = Record.objects.all().filter( Q(domain_id=domain.id) & Q(type='CNAME') )
     for record in records:
-      f.write(record.name+'\tCNAME\t'+'"'+record.content+'"\n')
+      f.write(record.name+'\tCNAME\t'+''+record.content)
+      if record.content[-3:] == 'com' or record.content[-3:] == 'org' or record.content[-3:] == 'net':
+        f.write('.')
+      f.write('\n')
     records = Record.objects.all().filter( Q(domain_id=domain.id) & Q(type='HINFO') )
     for record in records:
       f.write(record.name+'\tIN HINFO\t'+'"'+record.content+'"\n')
