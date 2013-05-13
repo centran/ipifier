@@ -9,9 +9,9 @@ def write_named():
   f = open('/tmp/named.ipifier.conf', 'w')
   domains = Domain.objects.all()
   for domain in domains:
-    named['zone '+domain.name+' IN'] = {
+    named['zone "'+domain.name+'" IN'] = {
       'type': domain.type,
-      'file': 'named.'+domain.name,
+      'file': '"named.'+domain.name+'"',
       'allow-update': { 'none': '' }
     }
   f.write(iscpy.MakeISC(named))
