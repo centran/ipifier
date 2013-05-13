@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 import datetime
 from itertools import chain
 from django.db.models import Q
+import sync_named
 
 @login_required()
 def default(request):
@@ -248,7 +249,7 @@ def add(request):
 
 @login_required()
 def add_domain(request):
-  if request.method =='POST':
+  if request.method == 'POST':
     form = DomainForm(request.POST)
     if form.is_valid():
       domains = Domain.objects.all()
@@ -604,3 +605,8 @@ def search_iprange_range(request, range=0):
         ip_list.pop()
         break
   return render_to_response('search-iprange-range.html', {'ip_list': ip_list[0:5]})
+
+@login_required()
+def sync(request):
+  sync_named.write_named()
+  return render_to_response('synced.html')

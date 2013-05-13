@@ -55,4 +55,5 @@ urlpatterns = patterns('',
     url(r'^search/ip/$', 'iptracker.views.search_ip', name='search-ip'),
     url(r'^search/iprange/$', 'iptracker.views.search_iprange', name='search-iprange'),
     url(r'^search/iprange/(?P<range>[\w\n]+)/$', 'iptracker.views.search_iprange_range', name='search-iprange-range'),
+    url(r'^sync/$', 'iptracker.views.sync', name='sync'),
 )
