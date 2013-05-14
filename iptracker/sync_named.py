@@ -3,7 +3,7 @@ import datetime
 import iscpy
 from iptracker.models import *
 from django.db.models import Q
-from subprocess import call
+import subprocess
 
 def write_named():
   named = {}
@@ -109,4 +109,15 @@ def write_named():
     f.close()
     
 def rsync_named():
-  subprocess.call()
+  try:
+    output = subprocess.check_output(['rsync','-avH','/tmp/named.ipifier.conf','root@dnstest.ch1:/etc/'])
+  except subprocess.CalledProcessError, e:
+    output = 'error with rsync: ' + e.output
+  outputs = []
+  outputs.append(output)
+  try:
+    output = subprocess.check_output(['rsync','-avH','/tmp/pri/*','root@dnstest.ch1:/var/named/'])
+  except subprocess.CalledProcessError, e:
+    output = 'error with rsync: ' + e.output  
+  outputs.append(output)
+  return outputs
