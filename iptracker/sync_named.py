@@ -3,6 +3,7 @@ import datetime
 import iscpy
 from iptracker.models import *
 from django.db.models import Q
+from subprocess import call
 
 def write_named():
   named = {}
@@ -106,3 +107,6 @@ def write_named():
     for record in records:
       f.write(record.name+'\tMBOXFW\t'+'"'+record.content+'"\n')
     f.close()
+    
+def rsync_named():
+  subprocess.call()

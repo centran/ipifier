@@ -201,16 +201,12 @@ class IpForm(forms.Form):
     found = False
     if ip_valid:
       for range in ranges:
-        r = IPNetwork(range.cidr)
-        addrs = list(r)
-        if len(ip)>3 and (ip[-2] == '/' or ip[-3] == '/' or ip[-4] == '/'):
-          for i in IPNetwork(ip):
-            if i in addrs:
-              found = True
-              break
-        else:
-          if IPAddress(ip) >= IPNetwork(range.cidr).network and IPAddress(ip) <= IPNetwork(range.cidr).broadcast:
+        if ip[-2] == '/' or ip[-3] == '/' or ip[-4] == '/':
+          if IPNetwork(ip) >= IPNetwork(range.cidr).network and IPNetwork(ip) <= IPNetwork(range.cidr).broadcast:
             found = True
+            break
+        if IPAddress(ip) >= IPNetwork(range.cidr).network and IPAddress(ip) <= IPNetwork(range.cidr).broadcast:
+          found = True
           break
     if not found and ip_valid:
       self.errors['ip'] = self.error_class(['IP is not within a known range'])
@@ -242,7 +238,7 @@ class IpForm(forms.Form):
           ip_valid = False
         if mac == i.mac and mac:
           self.errors['mac'] = self.error_class(['MAC already exists'])
-          del cleaned_data['mac']  
+          del cleaned_data['mac']
     return cleaned_data
 
 class EditIpForm(forms.Form):
