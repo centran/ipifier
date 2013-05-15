@@ -110,16 +110,16 @@ def write_named():
     f.close()
     
 def rsync_named():
-  try:
-    output = subprocess.check_output(['rsync','-avH','/tmp/named.ipifier.conf','root@dnstest.ch1:/etc/'])
-  except subprocess.CalledProcessError, e:
-    output = 'error with rsync: ' + e.output
   outputs = []
+  p = subprocess.Popen('rsync -avH /tmp/named.ipifier.conf root@dnstest.ch1:/etc/',
+    stdout=subprocess.PIPE,shell=True
+  )
+  output, err = p.communicate()
   outputs.append(output)
-  try:
-    output = subprocess.check_output(['rsync','-avH','/tmp/pri/*','root@dnstest.ch1:/var/named/'])
-  except subprocess.CalledProcessError, e:
-    output = 'error with rsync: ' + e.output  
+  p = subprocess.Popen('rsync -avH /tmp/pri/* root@dnstest.ch1:/var/named/',
+    stdout=subprocess.PIPE, shell=True
+  )
+  output, err = p.communicate()
   outputs.append(output)
   return outputs
 
@@ -128,4 +128,4 @@ def restart_named():
   ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
   ssh.connect('10.26.96.116', username='root', password='shin3y3zen')
   stdin, stdout, stderr = ssh.exec_command('service named restart')
-  return stdout
+  return stdout.readlines()
