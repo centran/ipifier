@@ -5,6 +5,14 @@
 {% block content %}
 <h1><a href="{% url search %}">Search</a></h1>
 <p>Config files are being synced</p>
-<p>OUTPUT:<br />{{ output1 }}<br /><br />{{ output2 }}</p>
-
+<p>RSYNC OUTPUT:<br />
+{% for output in rsync_output %}
+{{ output }}<br />
+{% endfor %}
+</p>
+<p>SERVICE RESTART OUTPUT:<br />
+{% for line in restart_output %}
+{{ line }}<br />
+{% endfor %}
+</p>
 {% endblock content %}

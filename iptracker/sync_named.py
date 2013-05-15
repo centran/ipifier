@@ -4,6 +4,7 @@ import iscpy
 from iptracker.models import *
 from django.db.models import Q
 import subprocess
+import paramiko
 
 def write_named():
   named = {}
@@ -121,3 +122,10 @@ def rsync_named():
     output = 'error with rsync: ' + e.output  
   outputs.append(output)
   return outputs
+
+def restart_named():
+  ssh = paramiko.SSHClient()
+  ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+  ssh.connect('10.26.96.116', username='root', password='shin3y3zen')
+  stdin, stdout, stderr = ssh.exec_command('service named restart')
+  return stdout

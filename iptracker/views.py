@@ -621,5 +621,6 @@ def search_iprange_range(request, range=0):
 @login_required()
 def sync(request):
   sync_named.write_named()
-  output = sync_named.rsync_named()
-  return render_to_response('synced.html',{'output1': output[0],'output2': output[1]})
+  rsync_output = sync_named.rsync_named()
+  restart_output = sync_named.restart_named()
+  return render_to_response('synced.html',{'rsync_output':rsync_output,'restart_output':restart_output})
