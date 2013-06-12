@@ -16,11 +16,56 @@ def write_named():
       'file': '"named.'+domain.name+'"',
       'allow-update': { 'none': '' }
     }
+
+  ipprefix = get_prefix()
+  for prefix in ipprefix:
+    named['zone "0.0.0.'+prefix+'" IN'] = {
+      'type': 'master',
+      'file': '"named.0.0.0.'+prefix+'"',
+      'allow-update': { 'none': '' }
+    }
   f.write(iscpy.MakeISC(named))
   f.close()
   if not os.path.exists('/tmp/pri'):
     os.makedirs('/tmp/pri')
-  
+
+  for prefix in ipprefix:
+    try:
+      f = open('/tmp/pri/named.0.0.0.'+prefix, 'r')
+      i = 1
+      n = '00'
+      lines = f.readlines()
+      for line in lines:
+        if i == 3:
+          n = line[-2:]
+          break
+        i = i + 1
+      num = int(n)
+      num = num+1
+      if num < 10:
+        n = '0' + str(num)
+      else:
+        n = str(num)
+      if num == 100:
+        n = '00'
+    except IOError:
+      n = '00'
+    f = open('/tmp/pri/named.0.0.0.'+prefix, 'w')
+    f.write('')
+    f.close
+    f = open('/tmp/pri/named.0.0.0.'+prefix, 'a')
+    f.write('$TTL 1D\n@\tIN\tSOA\tbigwells.net root.bigwells.net. (\n')
+    now = datetime.datetime.now()
+    f.write('\t\t\t'+str(now.year)+str(now.month)+str(now.day)+n+'\n')
+    f.write('\t\t\t8H\n\t\t\t2H\n\t\t\t4W\n\t\t\t1D )\n')
+    f.write('\t\tNS\tns1.he.net.\n')
+    f.write('\t\tNS\tns2.he.net.\n')
+    records = Record.objects.all().filter( type='A' ).filter( content__startswith=prefix )
+    for record in records:
+      r = record.content.split('.')
+      f.write(r[3]+'.'+r[2]+'.'+r[1]+'.'+r[0]+'.in-addr.arpa.\t\tPTR\t'+record.name)
+      domainname = Domain.objects.get(id=record.domain_id.id)
+      f.write('.'+domainname.name+'.\n')
   for domain in domains:
     try:
       f = open('/tmp/pri/named.'+domain.name, 'r')
@@ -129,3 +174,14 @@ def restart_named():
   ssh.connect('10.26.96.116', username='root', password='shin3y3zen')
   stdin, stdout, stderr = ssh.exec_command('service named restart')
   return stdout.readlines()
+
+def get_prefix():
+  records = Record.objects.all().filter( Q(type='A') )
+  prefixs = []
+  for record in records:
+    ip = record.content
+    ipsplit = ip.split('.')
+    prefix = ipsplit[0]
+    if not prefix in prefixs:
+      prefixs.append(prefix)
+  return prefixs
